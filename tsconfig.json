@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/components/AdminBarang.tsx",
+    "src/components/AdminDashboard.tsx",
+    "src/components/AdminHistory.tsx",
+    "src/components/AdminVerifications.tsx",
+    "src/components/CatalogView.tsx",
+    "src/components/CustomerBookings.tsx",
+    "src/components/CustomerCatalog.tsx",
+    "src/components/CustomerProfile.tsx",
+    "src/components/Header.tsx",
+    "src/pages/KatalogUtama.tsx",
+    "src/pages/PeralatanMendaki.tsx",
+    "src/pages/PerlengkapanCamping.tsx",
+    "src/data.ts"
+  ]
+}
