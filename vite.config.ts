@@ -12,6 +12,7 @@ export default defineConfig(() => {
       },
     },
     server: {
+      host: "0.0.0.0",
       allowedHosts: ["glamorous-squint-fabulous.ngrok-free.dev"],
       // Disable HMR and WebSocket server entirely
       hmr: false,
