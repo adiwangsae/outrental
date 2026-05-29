@@ -64,7 +64,7 @@ async function startServer() {
 
   // Simple direct server listen without infinite retry loops
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Server] Listening successfully on http://0.0.0.0:${PORT}`);
+    console.log(`[Server] Listening on port ${PORT}`);
   }).on("error", (err: any) => {
     console.error("[Server] Critical listener error:", err.message);
     process.exit(1);
