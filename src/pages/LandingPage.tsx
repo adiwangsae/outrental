@@ -112,7 +112,7 @@ export default function LandingPage() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl sm:text-6xl md:text-77xl font-black tracking-tight mb-8 text-white leading-[1.25]"
+            className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight mb-8 text-white leading-[1.15]"
           >
             Petualangan Hebat <br className="hidden md:block"/>
             Mulai dari <span className="bg-gradient-to-r from-white via-[#FF5500] to-[#FF3300] bg-clip-text text-transparent inline-block">Sini.</span>
