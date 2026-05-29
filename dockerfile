@@ -1,26 +1,26 @@
-# 1. Gunakan Node.js resmi versi 20 berbasis Alpine Linux (ringan)
+# 1. Gunakan versi Node.js yang ringan dan modern
 FROM node:20-alpine
 
 # 2. Tentukan direktori kerja di dalam server virtual
 WORKDIR /app
 
-# 3. Salin file package.json dan package-lock.json terlebih dahulu
+# 3. Salin file package terlebih dahulu agar instalasi dependency lebih cepat
 COPY package*.json ./
 
-# 4. Instal semua dependencies (termasuk devDependencies untuk build)
+# 4. Instal semua dependencies (termasuk esbuild dan tsc untuk build)
 RUN npm install
 
-# 5. Salin seluruh sisa kode proyek dari laptop ke dalam server virtual
+# 5. Salin seluruh kode proyek dari laptopmu ke dalam container
 COPY . .
 
-# 6. Generate Prisma Client agar sinkron dengan database Supabase
+# 6. Generate Prisma Client agar backend bisa terhubung ke PostgreSQL Supabase
 RUN npx prisma generate
 
-# 7. Jalankan skrip build (mengompilasi React dan Express lewat esbuild)
+# 7. Jalankan proses build (Mengompilasi React + membundel server.ts ke dist/server.cjs)
 RUN npm run build
 
-# 8. Beritahu Back4app bahwa aplikasi ini berjalan di port 3000
+# 8. Beritahu Back4app bahwa aplikasi berjalan di port 3000
 EXPOSE 3000
 
-# 9. Jalankan aplikasi menggunakan perintah start dari package.json
+# 9. Jalankan aplikasi menggunakan perintah start ("node dist/server.cjs")
 CMD ["npm", "start"]
