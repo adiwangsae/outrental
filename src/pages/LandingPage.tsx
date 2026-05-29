@@ -108,7 +108,7 @@ export default function LandingPage() {
       <main className="flex-1 w-full max-w-7xl mx-auto pt-20 animate-fade-in font-sans">
         
         {/* Hero Section */}
-        <section className="px-6 pt-24 pb-20 text-center mx-auto max-w-4xl flex flex-col items-center justify-center min-h-[60vh]">
+        <section className="px-6 pt-20 pb-20 text-center mx-auto max-w-4xl flex flex-col items-center justify-center min-h-[60vh]">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
