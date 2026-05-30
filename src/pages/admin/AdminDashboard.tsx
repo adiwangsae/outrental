@@ -1982,102 +1982,114 @@ export default function AdminDashboard() {
 
       {/* ------------------ MODAL 5: TAMBAH PRODUCT BARU ------------------ */}
       {showAddInv && (
-        <div id="add-inv-modal" className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#151515] border border-[#1D1D1D] text-[#F7F7F7] rounded-3xl p-8 w-full max-w-xl shadow-2xl relative animate-scale-up">
-            <h3 className="text-xl font-bold text-[#F7F7F7] mb-2 tracking-tight">
-              Provision New Equipment
-            </h3>
-            <p className="text-xs text-[#BDBDBD] mb-6 leading-normal">
-              Register a new product in the catalog and initialize its associated physical unit serials into the warehouse tracker.
-            </p>
+        <div id="add-inv-modal" className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-[#151515]/95 border border-white/[0.08] text-[#F7F7F7] rounded-3xl p-6 md:p-8 w-full max-w-xl shadow-[0_24px_50px_-12px_rgba(0,0,0,0.8)] relative animate-scale-up backdrop-blur-xl max-h-[90dvh] md:max-h-[85vh] flex flex-col overflow-hidden">
+            {/* Header: Fixed */}
+            <div className="pb-4 border-b border-[#1D1D1D]">
+              <h3 className="text-lg md:text-xl font-bold text-[#F7F7F7] mb-1 tracking-tight">
+                Provision New Equipment
+              </h3>
+              <p className="text-[11px] md:text-xs text-[#BDBDBD] leading-normal">
+                Register a new product in the catalog and initialize its associated physical unit serials into the warehouse tracker.
+              </p>
+            </div>
 
-            <form onSubmit={handleAddInventory} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Category:</label>
-                  <select
-                    value={newInv.categoryId}
-                    onChange={e => setNewInv({ ...newInv, categoryId: e.target.value })}
-                    className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
-                    required
-                  >
-                    <option value="" disabled>-- Select Catalog --</option>
-                    {[...new Set(inventoryItems.map(item => item.category ? JSON.stringify({ id: item.category.id, name: item.category.name }) : null).filter(Boolean))].map((str: any) => {
-                      const cat = JSON.parse(str);
-                      return <option key={cat.id} value={cat.id}>{cat.name}</option>;
-                    })}
-                    {/* Fallback standard categories if inventory values are empty */}
-                    {inventoryItems.length === 0 && (
-                      <>
-                        <option value="1">Tenda Dome</option>
-                        <option value="2">Carrier & Tas Gunung</option>
-                        <option value="3">Sleeping Bed & Matras</option>
-                        <option value="4">Peralatan Masak Camping</option>
-                      </>
-                    )}
-                  </select>
-                </div>
+            {/* Form: Flex and Scrollable inside modal content */}
+            <form onSubmit={handleAddInventory} className="flex-1 flex flex-col min-h-0">
+              <div className="flex-1 overflow-y-auto py-5 pr-1 md:pr-2 space-y-5 scrollbar-thin scrollbar-thumb-white/10">
                 
+                {/* Dual Fields: Responsive Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                  <div>
+                    <label className="block text-[9px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-1.5 md:mb-2">Category:</label>
+                    <select
+                      value={newInv.categoryId}
+                      onChange={e => setNewInv({ ...newInv, categoryId: e.target.value })}
+                      className="w-full px-4 py-2.5 md:px-5 md:py-3.5 text-xs md:text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
+                      required
+                    >
+                      <option value="" disabled>-- Select Catalog --</option>
+                      {[...new Set(inventoryItems.map(item => item.category ? JSON.stringify({ id: item.category.id, name: item.category.name }) : null).filter(Boolean))].map((str: any) => {
+                        const cat = JSON.parse(str);
+                        return <option key={cat.id} value={cat.id}>{cat.name}</option>;
+                      })}
+                      {/* Fallback standard categories if inventory values are empty */}
+                      {inventoryItems.length === 0 && (
+                        <>
+                          <option value="1">Tenda Dome</option>
+                          <option value="2">Carrier & Tas Gunung</option>
+                          <option value="3">Sleeping Bed & Matras</option>
+                          <option value="4">Peralatan Masak Camping</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-[9px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-1.5 md:mb-2">Item Label:</label>
+                    <input
+                      type="text"
+                      value={newInv.name}
+                      onChange={e => setNewInv({ ...newInv, name: e.target.value })}
+                      placeholder="e.g. Carrier Deuter 50L"
+                      className="w-full px-4 py-2.5 md:px-5 md:py-3.5 text-xs md:text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Rental Tariff */}
                 <div>
-                  <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Item Label:</label>
+                  <label className="block text-[9px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-1.5 md:mb-2">Rental Tariff (Rp/Day):</label>
                   <input
-                    type="text"
-                    value={newInv.name}
-                    onChange={e => setNewInv({ ...newInv, name: e.target.value })}
-                    placeholder="e.g. Carrier Deuter 50L"
-                    className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
+                    type="number"
+                    value={newInv.price}
+                    onChange={e => setNewInv({ ...newInv, price: e.target.value })}
+                    placeholder="e.g. 35000"
+                    className="w-full px-4 py-2.5 md:px-5 md:py-3.5 text-xs md:text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors"
+                    required
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-[9px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-1.5 md:mb-2">Description:</label>
+                  <textarea
+                    value={newInv.desc}
+                    onChange={e => setNewInv({ ...newInv, desc: e.target.value })}
+                    placeholder="Technical specs, capabilities, condition..."
+                    rows={2}
+                    className="w-full px-4 py-2.5 md:px-5 md:py-3.5 text-xs md:text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors resize-none"
+                    required
+                  />
+                </div>
+
+                {/* Hardware Serials */}
+                <div>
+                  <label className="block text-[9px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-1.5 md:mb-2">Hardware Serial Codes (Comma separated):</label>
+                  <textarea
+                    value={newInv.codes}
+                    onChange={e => setNewInv({ ...newInv, codes: e.target.value })}
+                    placeholder="e.g. UNT-CRT-001, UNT-CRT-002, UNT-CRT-003"
+                    rows={2}
+                    className="w-full px-4 py-2.5 md:px-5 md:py-3.5 text-xs md:text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors resize-none"
                     required
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Rental Tariff (Rp/Day):</label>
-                <input
-                  type="number"
-                  value={newInv.price}
-                  onChange={e => setNewInv({ ...newInv, price: e.target.value })}
-                  placeholder="e.g. 35000"
-                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Description:</label>
-                <textarea
-                  value={newInv.desc}
-                  onChange={e => setNewInv({ ...newInv, desc: e.target.value })}
-                  placeholder="Technical specs, capabilities, condition..."
-                  rows={2}
-                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors resize-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Hardware Serial Codes (Comma separated):</label>
-                <textarea
-                  value={newInv.codes}
-                  onChange={e => setNewInv({ ...newInv, codes: e.target.value })}
-                  placeholder="e.g. UNT-CRT-001, UNT-CRT-002, UNT-CRT-003"
-                  rows={2}
-                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors resize-none"
-                  required
-                />
-              </div>
-
-              <div className="flex gap-4 pt-4 border-t border-[#1D1D1D]">
+              {/* Footer: Fixed Action Buttons */}
+              <div className="flex gap-3 md:gap-4 pt-4 border-t border-[#1D1D1D] mt-auto">
                 <button
                   type="button"
                   onClick={() => setShowAddInv(false)}
-                  className="flex-1 px-5 py-3.5 bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] hover:bg-[#1D1D1D] text-sm font-bold rounded-xl cursor-pointer transition-colors"
+                  className="flex-1 px-4 py-3 md:px-5 md:py-3.5 bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] hover:bg-[#1D1D1D] text-xs md:text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
                   Discard
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-5 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] text-sm font-bold rounded-xl cursor-pointer transition-colors"
+                  className="flex-1 px-4 py-3 md:px-5 md:py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] text-xs md:text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
                   Commit Catalog
                 </button>
