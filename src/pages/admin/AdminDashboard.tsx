@@ -32,7 +32,8 @@ import {
   ChevronRight,
   Menu,
   X,
-  CreditCard
+  CreditCard,
+  Trash2
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -190,6 +191,28 @@ export default function AdminDashboard() {
       fetchData();
     } catch {
       toast.error("Gagal memproses aksi verifikasi");
+    }
+  };
+
+  const handleDeleteUser = async (id: string, name: string) => {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus pelanggan "${name}"? Seluruh riwayat transaksi, pembayaran, denda, dan notifikasi terkait pelanggan ini akan dihapus secara permanen.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal menghapus pelanggan");
+      
+      toast.success(`Pelanggan "${name}" berhasil dihapus.`);
+      addLocalLog("CUSTOMER", `Pelanggan "${name}" (ID: ${id}) ditiadakan dari sistem`);
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Gagal memproses penghapusan pelanggan");
     }
   };
 
@@ -1304,6 +1327,19 @@ export default function AdminDashboard() {
                             </button>
                           </div>
                         )}
+
+                        <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                          <span className="text-[10px] text-[#BDBDBD]/45 uppercase font-mono tracking-wider">
+                            UID: {u.id.substring(0, 8)}...
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteUser(u.id, u.name)}
+                            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Trash2 size={12} /> Hapus Pelanggan
+                          </button>
+                        </div>
                       </div>
                     ))}
                     </div>

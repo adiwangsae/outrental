@@ -143,6 +143,85 @@ router.post("/users/:id/verify", async (req, res) => {
   }
 });
 
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (req.user?.id === id) {
+      return res.status(400).json({ error: "Anda tidak dapat menghapus akun admin Anda sendiri." });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Find bookings
+      const userBookings = await tx.booking.findMany({
+        where: { userId: id },
+        include: { items: true }
+      });
+
+      const bookingIds = userBookings.map(b => b.id);
+
+      // Reclaim physical lease items to available state if they are currently leased or reserved under this user
+      for (const b of userBookings) {
+        for (const item of b.items) {
+          await tx.inventoryUnit.updateMany({
+            where: { id: item.unitId, status: { in: ["booked", "borrowed"] } },
+            data: { status: "available" }
+          });
+        }
+      }
+
+      // 1. Delete BookingItem
+      await tx.bookingItem.deleteMany({
+        where: { bookingId: { in: bookingIds } }
+      });
+
+      // 2. Delete Penalty
+      await tx.penalty.deleteMany({
+        where: { bookingId: { in: bookingIds } }
+      });
+
+      // 3. Delete Payment
+      await tx.payment.deleteMany({
+        where: {
+          OR: [
+            { userId: id },
+            { bookingId: { in: bookingIds } }
+          ]
+        }
+      });
+
+      // 4. Delete Booking
+      await tx.booking.deleteMany({
+        where: { userId: id }
+      });
+
+      // 5. Delete Verification
+      await tx.verification.deleteMany({
+        where: { userId: id }
+      });
+
+      // 6. Delete Notification
+      await tx.notification.deleteMany({
+        where: { userId: id }
+      });
+
+      // 7. Delete AuditLog
+      await tx.auditLog.deleteMany({
+        where: { userId: id }
+      });
+
+      // 8. Delete User
+      await tx.user.delete({
+        where: { id }
+      });
+    });
+
+    res.json({ success: true, message: "Pelanggan berhasil dihapus." });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET all inventory items and their units plus maintenance logs
 router.get("/inventory", async (req, res) => {
   try {
