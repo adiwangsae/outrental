@@ -5,4 +5,4 @@ tunnels:
   my_app:
     proto: http
     addr: 3000
-    domain: https://outrental.ngrok-free.dev
+    domain: outrental.ngrok-free.dev
