@@ -68,16 +68,16 @@ async function main() {
     });
   };
 
-  const item1 = await createItem(catTenda.id, 'Tenda Eiger 4P', 'Tenda dome double layer', 65000, 'Tent', ['TEN-EIG-4P-001', 'TEN-EIG-4P-002', 'TEN-EIG-4P-003']);
-  const item2 = await createItem(catTas.id, 'Carrier Consina 60L', 'Tas carrier 60 liter dengan raincover', 40000, 'Backpack', ['BAG-CON-60-001', 'BAG-CON-60-002']);
-  const item3 = await createItem(catTenda.id, 'Tenda Great Outdoor 2P', 'Tenda dome ringan kapasitas 2 orang', 45000, 'Tent', ['TEN-GO-2P-001', 'TEN-GO-2P-002']);
-  const item4 = await createItem(catMasak.id, 'Nesting Set Bulat', 'Satu set alat masak nesting aluminium', 15000, 'Flame', ['MSK-NST-001', 'MSK-NST-002', 'MSK-NST-003', 'MSK-NST-004']);
-  const item5 = await createItem(catMasak.id, 'Kompor Lipat Kotak', 'Kompor gas mini lipat untuk camping', 12000, 'Flame', ['MSK-KMP-001', 'MSK-KMP-002', 'MSK-KMP-003']);
-  const item6 = await createItem(catLampu.id, 'Headlamp Energizer', 'Headlamp terang dengan mode merah', 10000, 'Flashlight', ['LMP-HDL-001', 'LMP-HDL-002']);
-  const item7 = await createItem(catTidur.id, 'Sleeping Bag Polar', 'SB hangat bahan inner polar tebal', 18000, 'Package', ['TDR-SB-001', 'TDR-SB-002', 'TDR-SB-003']);
-  const item8 = await createItem(catTidur.id, 'Matras Foil', 'Matras alumunium foil tahan dingin', 6000, 'Package', ['TDR-MTR-001', 'TDR-MTR-002', 'TDR-MTR-003']);
+  await createItem(catTenda.id, 'Tenda Eiger 4P', 'Tenda dome double layer', 65000, 'Tent', ['TEN-EIG-4P-001', 'TEN-EIG-4P-002', 'TEN-EIG-4P-003']);
+  await createItem(catTas.id, 'Carrier Consina 60L', 'Tas carrier 60 liter dengan raincover', 40000, 'Backpack', ['BAG-CON-60-001', 'BAG-CON-60-002']);
+  await createItem(catTenda.id, 'Tenda Great Outdoor 2P', 'Tenda dome ringan kapasitas 2 orang', 45000, 'Tent', ['TEN-GO-2P-001', 'TEN-GO-2P-002']);
+  await createItem(catMasak.id, 'Nesting Set Bulat', 'Satu set alat masak nesting aluminium', 15000, 'Flame', ['MSK-NST-001', 'MSK-NST-002', 'MSK-NST-003', 'MSK-NST-004']);
+  await createItem(catMasak.id, 'Kompor Lipat Kotak', 'Kompor gas mini lipat untuk camping', 12000, 'Flame', ['MSK-KMP-001', 'MSK-KMP-002', 'MSK-KMP-003']);
+  await createItem(catLampu.id, 'Headlamp Energizer', 'Headlamp terang dengan mode merah', 10000, 'Flashlight', ['LMP-HDL-001', 'LMP-HDL-002']);
+  await createItem(catTidur.id, 'Sleeping Bag Polar', 'SB hangat bahan inner polar tebal', 18000, 'Package', ['TDR-SB-001', 'TDR-SB-002', 'TDR-SB-003']);
+  await createItem(catTidur.id, 'Matras Foil', 'Matras alumunium foil tahan dingin', 6000, 'Package', ['TDR-MTR-001', 'TDR-MTR-002', 'TDR-MTR-003']);
 
-  console.log('Seed completed', { admin, cust, item1, item2 });
+  console.log('Seed completed', { admin, cust });
 }
 
 main()
