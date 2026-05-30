@@ -5,6 +5,7 @@ import cors from "cors";
 import apiRouter from "./server/api.js";
 import fs from "fs";
 import prisma from "./server/prisma.js";
+import { seedOnStartup } from "./server/startup-seeder.js";
 
 async function startServer() {
   const app = express();
@@ -16,6 +17,7 @@ async function startServer() {
   try {
     await prisma.$connect();
     console.log("[Server] PostgreSQL Database connected successfully.");
+    await seedOnStartup(prisma);
   } catch (error: any) {
     console.error("[Server] Critical Database Connection Error:", error.message);
     console.warn("Continuing startup to allow frontend to load, but APIs will fail.");
@@ -64,7 +66,7 @@ async function startServer() {
 
   // Simple direct server listen without infinite retry loops
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Server] Listening on port ${PORT}`);
+    console.log(`[Server] Listening successfully on http://0.0.0.0:${PORT}`);
   }).on("error", (err: any) => {
     console.error("[Server] Critical listener error:", err.message);
     process.exit(1);
