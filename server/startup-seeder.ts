@@ -17,97 +17,115 @@ export async function seedOnStartup(prisma: PrismaClient) {
     const catTidur = await createOrGetCategory('Peralatan Tidur');
     const catLampu = await createOrGetCategory('Penerangan');
 
-    // 2. Count existing items - if we have items, don't recreate them
-    const itemCount = await prisma.inventoryItem.count();
-    if (itemCount === 0) {
-      console.log("[StartupSeeder] No items found in database. Seeding catalogs...");
+    // 2. Ensure each individual item exists in the database.
+    // This handles cases where only some items were created (e.g. only 2 items from partial seed or resets)
+    console.log("[StartupSeeder] Validating catalog items list...");
 
-      const createItem = async (
-        categoryId: string, 
-        name: string, 
-        description: string, 
-        pricePerDay: number, 
-        icon: string, 
-        unitsData: { code: string; condition?: string }[]
-      ) => {
-        const existing = await prisma.inventoryItem.findFirst({ where: { name } });
-        if (existing) return existing;
-
-        return await prisma.inventoryItem.create({
-          data: {
-            categoryId,
-            name,
-            description,
-            pricePerDay,
-            icon,
-            units: {
-              create: unitsData.map(u => ({ 
-                unitCode: u.code, 
-                condition: u.condition || 'Optimal' 
-              }))
+    const createItemIfMissing = async (
+      categoryId: string, 
+      name: string, 
+      description: string, 
+      pricePerDay: number, 
+      icon: string, 
+      unitsData: { code: string; condition?: string }[]
+    ) => {
+      const existing = await prisma.inventoryItem.findFirst({ where: { name } });
+      if (existing) {
+        // Also check if units exist. In case they exist but have no units, we can create units.
+        const existingUnits = await prisma.inventoryUnit.count({
+          where: { inventoryItemId: existing.id }
+        });
+        if (existingUnits === 0) {
+          console.log(`[StartupSeeder] Found item '${name}' but it has no units. Seeding units...`);
+          for (const u of unitsData) {
+            const unitExist = await prisma.inventoryUnit.findUnique({ where: { unitCode: u.code } });
+            if (!unitExist) {
+              await prisma.inventoryUnit.create({
+                data: {
+                  inventoryItemId: existing.id,
+                  unitCode: u.code,
+                  condition: u.condition || 'Optimal'
+                }
+              });
             }
           }
-        });
-      };
+        }
+        return existing;
+      }
 
-      // Tenda Eiger 4P: Rp 65.000 / day
-      await createItem(catTenda.id, 'Tenda Eiger 4P', 'Tenda dome double layer yang andal untuk segala cuaca.', 65000, 'Tent', [
-        { code: 'TEN-EIG-4P-001', condition: 'Optimal' },
-        { code: 'TEN-EIG-4P-002', condition: 'Optimal' },
-        { code: 'TEN-EIG-4P-003', condition: 'Optimal' }
-      ]);
+      console.log(`[StartupSeeder] Seeding missing catalog item: ${name}`);
+      return await prisma.inventoryItem.create({
+        data: {
+          categoryId,
+          name,
+          description,
+          pricePerDay,
+          icon,
+          units: {
+            create: unitsData.map(u => ({ 
+              unitCode: u.code, 
+              condition: u.condition || 'Optimal' 
+            }))
+          }
+        }
+      });
+    };
 
-      // Carrier Consina 60L: Rp 40.000 / day
-      await createItem(catTas.id, 'Carrier Consina 60L', 'Tas carrier 60 liter dengan raincover dan ergonomi prima.', 40000, 'Backpack', [
-        { code: 'BAG-CON-60-001', condition: 'Optimal' },
-        { code: 'BAG-CON-60-002', condition: 'Optimal' }
-      ]);
+    // Tenda Eiger 4P: Rp 65.000 / day
+    await createItemIfMissing(catTenda.id, 'Tenda Eiger 4P', 'Tenda dome double layer yang andal untuk segala cuaca.', 65000, 'Tent', [
+      { code: 'TEN-EIG-4P-001', condition: 'Optimal' },
+      { code: 'TEN-EIG-4P-002', condition: 'Optimal' },
+      { code: 'TEN-EIG-4P-003', condition: 'Optimal' }
+    ]);
 
-      // Tenda Great Outdoor 2P: Rp 45.000 / day
-      await createItem(catTenda.id, 'Tenda Great Outdoor 2P', 'Tenda dome ringan kapasitas 2 orang.', 45000, 'Tent', [
-        { code: 'TEN-GO-2P-001', condition: 'Prima - Steril Siap Pakai' },
-        { code: 'TEN-GO-2P-002', condition: 'Optimal' }
-      ]);
+    // Carrier Consina 60L: Rp 40.000 / day
+    await createItemIfMissing(catTas.id, 'Carrier Consina 60L', 'Tas carrier 60 liter dengan raincover dan ergonomi prima.', 40000, 'Backpack', [
+      { code: 'BAG-CON-60-001', condition: 'Optimal' },
+      { code: 'BAG-CON-60-002', condition: 'Optimal' }
+    ]);
 
-      // Nesting Set Bulat: Rp 15.000 / day
-      await createItem(catMasak.id, 'Nesting Set Bulat', 'Satu set alat masak nesting aluminium.', 15000, 'Flame', [
-        { code: 'MSK-NST-001', condition: 'Optimal' },
-        { code: 'MSK-NST-002', condition: 'Optimal' },
-        { code: 'MSK-NST-003', condition: 'Optimal' },
-        { code: 'MSK-NST-004', condition: 'Optimal' }
-      ]);
+    // Tenda Great Outdoor 2P: Rp 45.000 / day
+    await createItemIfMissing(catTenda.id, 'Tenda Great Outdoor 2P', 'Tenda dome ringan kapasitas 2 orang.', 45000, 'Tent', [
+      { code: 'TEN-GO-2P-001', condition: 'Prima - Steril Siap Pakai' },
+      { code: 'TEN-GO-2P-002', condition: 'Optimal' }
+    ]);
 
-      // Kompor Lipat Kotak: Rp 12.000 / day
-      await createItem(catMasak.id, 'Kompor Lipat Kotak', 'Kompor gas mini lipat untuk camping.', 12000, 'Flame', [
-        { code: 'MSK-KMP-001', condition: 'Optimal' },
-        { code: 'MSK-KMP-002', condition: 'Optimal' },
-        { code: 'MSK-KMP-003', condition: 'Optimal' }
-      ]);
+    // Nesting Set Bulat: Rp 15.000 / day
+    await createItemIfMissing(catMasak.id, 'Nesting Set Bulat', 'Satu set alat masak nesting aluminium.', 15000, 'Flame', [
+      { code: 'MSK-NST-001', condition: 'Optimal' },
+      { code: 'MSK-NST-002', condition: 'Optimal' },
+      { code: 'MSK-NST-003', condition: 'Optimal' },
+      { code: 'MSK-NST-004', condition: 'Optimal' }
+    ]);
 
-      // Headlamp Energizer: Rp 10.000 / day
-      await createItem(catLampu.id, 'Headlamp Energizer', 'Headlamp terang dengan mode merah.', 10000, 'Flashlight', [
-        { code: 'LMP-HDL-001', condition: 'Optimal' },
-        { code: 'LMP-HDL-002', condition: 'Prima - Steril Siap Pakai' }
-      ]);
+    // Kompor Lipat Kotak: Rp 12.000 / day
+    await createItemIfMissing(catMasak.id, 'Kompor Lipat Kotak', 'Kompor gas mini lipat untuk camping.', 12000, 'Flame', [
+      { code: 'MSK-KMP-001', condition: 'Optimal' },
+      { code: 'MSK-KMP-002', condition: 'Optimal' },
+      { code: 'MSK-KMP-003', condition: 'Optimal' }
+    ]);
 
-      // Sleeping Bag Polar: Rp 18.000 / day
-      await createItem(catTidur.id, 'Sleeping Bag Polar', 'SB hangat bahan inner polar tebal.', 18000, 'Package', [
-        { code: 'TDR-SB-001', condition: 'Optimal' },
-        { code: 'TDR-SB-002', condition: 'Optimal' },
-        { code: 'TDR-SB-003', condition: 'Optimal' }
-      ]);
+    // Headlamp Energizer: Rp 10.000 / day
+    await createItemIfMissing(catLampu.id, 'Headlamp Energizer', 'Headlamp terang dengan mode merah.', 10000, 'Flashlight', [
+      { code: 'LMP-HDL-001', condition: 'Optimal' },
+      { code: 'LMP-HDL-002', condition: 'Prima - Steril Siap Pakai' }
+    ]);
 
-      // Matras Foil: Rp 6.000 / day
-      await createItem(catTidur.id, 'Matras Foil', 'Matras alumunium foil tahan dingin.', 6000, 'Package', [
-        { code: 'TDR-MTR-001', condition: 'Optimal' },
-        { code: 'TDR-MTR-002', condition: 'Optimal' },
-        { code: 'TDR-MTR-003', condition: 'Optimal' }
-      ]);
+    // Sleeping Bag Polar: Rp 18.000 / day
+    await createItemIfMissing(catTidur.id, 'Sleeping Bag Polar', 'SB hangat bahan inner polar tebal.', 18000, 'Package', [
+      { code: 'TDR-SB-001', condition: 'Optimal' },
+      { code: 'TDR-SB-002', condition: 'Optimal' },
+      { code: 'TDR-SB-003', condition: 'Optimal' }
+    ]);
 
-      console.log("[StartupSeeder] Catalog items successfully seeded!");
-    } else {
-      console.log(`[StartupSeeder] Found ${itemCount} items existing in database. Skipping catalog seed.`);
-    }
+    // Matras Foil: Rp 6.000 / day
+    await createItemIfMissing(catTidur.id, 'Matras Foil', 'Matras alumunium foil tahan dingin.', 6000, 'Package', [
+      { code: 'TDR-MTR-001', condition: 'Optimal' },
+      { code: 'TDR-MTR-002', condition: 'Optimal' },
+      { code: 'TDR-MTR-003', condition: 'Optimal' }
+    ]);
+
+    console.log("[StartupSeeder] Catalog items successfully validated and fully seeded!");
 
     // 3. Ensure Default Users exist
     const adminCount = await prisma.user.count({ where: { role: 'admin' } });
