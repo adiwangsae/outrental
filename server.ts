@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import cors from "cors";
 import apiRouter from "./server/api.js";
 import fs from "fs";
+import { execSync } from "child_process";
 import prisma from "./server/prisma.js";
 import { seedOnStartup } from "./server/startup-seeder.js";
 
@@ -12,6 +13,23 @@ async function startServer() {
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
   console.log(`Starting Express app on Port ${PORT} with PID ${process.pid}`);
+
+  // Run Programmatic Database Schema Push on Startup
+  const dbUrl = process.env.DATABASE_URL;
+  if (dbUrl) {
+    try {
+      console.log("[Server] Optimizing DATABASE_URL for programmatic schema push...");
+      const directUrl = dbUrl.replace(":6543", ":5432").replace("?pgbouncer=true", "");
+      console.log("[Server] Synchronizing database tables with npx prisma db push...");
+      execSync("npx prisma db push --skip-generate", {
+        env: { ...process.env, DATABASE_URL: directUrl },
+        stdio: "inherit"
+      });
+      console.log("[Server] Database schema pushed successfully at startup!");
+    } catch (pushError: any) {
+      console.error("[Server] Programmatic schema push had an issue, attempting to proceed:", pushError.message || pushError);
+    }
+  }
 
   // Test Database Connection
   try {
