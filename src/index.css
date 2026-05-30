@@ -51,16 +51,80 @@ a, button, select, input, textarea, div, section {
   box-shadow: none !important;
 }
 
-/* Premium micro-shadows to define hierarchy instead of lines */
+/* Premium micro-shadows and liquid glass definition to replace lines and create 2.5D depth */
 .liquid-glass-card, 
 .card-uniform,
 [class*="rounded-3xl"], 
-[class*="rounded-2xl"] {
-  background-color: #121212 !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+[class*="rounded-2xl"],
+[class*="rounded-[24px]"],
+[class*="rounded-[32px]"],
+[class*="rounded-[40px]"],
+[class*="rounded-[48px]"] {
+  background: rgba(13, 14, 18, 0.52) !important;
+  backdrop-filter: blur(28px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 
+    0 20px 50px -12px rgba(0, 0, 0, 0.8), 
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Fixes any card/background that is white or light gray to be a uniform slate gray card background */
+/* Glass card hovering styles */
+.liquid-glass-card:hover,
+[class*="rounded-3xl"]:hover, 
+[class*="rounded-2xl"]:hover,
+[class*="rounded-[24px]"]:hover,
+[class*="rounded-[32px]"]:hover,
+[class*="rounded-[40px]"]:hover,
+[class*="rounded-[48px]"]:hover {
+  background: rgba(20, 22, 28, 0.68) !important;
+  border-color: rgba(255, 102, 0, 0.35) !important;
+  box-shadow: 
+    0 28px 60px -8px rgba(0, 0, 0, 0.85), 
+    inset 0 1px 2px rgba(255, 255, 255, 0.28),
+    0 0 16px rgba(255, 102, 0, 0.12) !important;
+}
+
+/* Prevent nested/stacked glass layers from compounding backdrop blurs and looking cluttered ("menumpuk") */
+[class*="rounded-[48px]"] [class*="rounded-3xl"],
+[class*="rounded-[48px]"] [class*="rounded-2xl"],
+[class*="rounded-[48px]"] [class*="rounded-[24px]"],
+[class*="rounded-[48px]"] [class*="rounded-[32px]"],
+[class*="rounded-3xl"] [class*="rounded-2xl"],
+[class*="rounded-3xl"] [class*="rounded-[24px]"],
+.liquid-glass-card [class*="rounded-3xl"],
+.liquid-glass-card [class*="rounded-2xl"],
+.liquid-glass-card [class*="rounded-[24px]"],
+.liquid-glass-card [class*="rounded-[32px]"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(20, 22, 30, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Hover effect for nested cards or list items to make them feel responsive and premium */
+[class*="rounded-[48px]"] [class*="rounded-3xl"]:hover,
+[class*="rounded-[48px]"] [class*="rounded-2xl"]:hover,
+[class*="rounded-[48px]"] [class*="rounded-[24px]"]:hover,
+[class*="rounded-[48px]"] [class*="rounded-[32px]"]:hover,
+[class*="rounded-3xl"] [class*="rounded-2xl"]:hover,
+[class*="rounded-3xl"] [class*="rounded-[24px]"]:hover,
+.liquid-glass-card [class*="rounded-2xl"]:hover {
+  background: rgba(28, 30, 42, 0.95) !important;
+  border-color: rgba(255, 102, 0, 0.35) !important;
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.55),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.18),
+    0 0 12px rgba(255, 102, 0, 0.08) !important;
+}
+
+/* Fixes any card/background that is white or light gray to be a uniform slate gray card background with liquid glass */
 .bg-white, 
 .bg-neutral-50, 
 .bg-stone-50, 
@@ -69,7 +133,12 @@ a, button, select, input, textarea, div, section {
 .bg-neutral-100,
 .bg-stone-100, 
 .bg-[#faf9f6]\/95 {
-  background-color: #121212 !important;
+  background: rgba(13, 14, 18, 0.52) !important;
+  backdrop-filter: blur(28px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
   color: #FFFFFF !important;
 }
 
@@ -93,18 +162,6 @@ a, button, select, input, textarea, div, section {
   color: #a0a0a0 !important;
 }
 
-/* Map specific brand colors and green highlights to premium Orange */
-.text-\[\#a3b18a\],
-.text-\[\#3a5a40\],
-.text-\[\#588157\],
-.text-forest,
-.text-emerald-700,
-.text-emerald-400,
-.text-amber-700,
-.text-amber-500 {
-  color: #FF6600 !important;
-}
-
 /* Solid Brand Backgrounds -> High Contrast Premium Orange */
 .bg-\[\#2d4a36\],
 .bg-forest,
@@ -114,12 +171,61 @@ a, button, select, input, textarea, div, section {
 .bg-stone-900,
 .bg-[#2d4a36],
 .bg-[#3a5a40],
+.bg-\[\#FF7A00\],
 .bg-[#588157],
+.bg-[#FF7A00],
 .hover\:bg-\[\#1f3325\]:hover,
-.hover\:bg-[#1f3325]:hover {
+.hover\:bg-[#1f3325]:hover,
+.hover\:bg-\[\#E66E00\]:hover,
+.text-\[\#FF7A00\] {
   background-color: #FF6600 !important;
   color: #FFFFFF !important;
 }
+
+/* Specific fix for text classes which shouldn't have background color override */
+.text-\[\#a3b18a\],
+.text-\[\#3a5a40\],
+.text-\[\#588157\],
+.text-\[\#FF7A00\],
+.text-forest,
+.text-emerald-700,
+.text-emerald-400,
+.text-amber-700,
+.group-hover\:text-\[\#FF7A00\]:hover,
+.text-amber-500 {
+  color: #FF6600 !important;
+  background-color: transparent !important;
+}
+
+/* Global Button Interactions */
+button[class*="bg-"], 
+a[class*="bg-"] {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+button[class*="bg-"]:hover:not(:disabled),
+a[class*="bg-"]:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px -8px rgba(255, 102, 0, 0.4);
+}
+button[class*="bg-"]:active:not(:disabled),
+a[class*="bg-"]:active {
+  transform: translateY(0px) scale(0.98) !important;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Global Card Interactions */
+.bg-\[\#151515\] {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.bg-\[\#151515\]:hover {
+  transform: translateY(-4px) scale(1.005) !important;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7) !important;
+  border-color: rgba(255, 102, 0, 0.3) !important;
+}
+
 
 /* Under hover states */
 .hover\:text-\[\#a3b18a\]:hover,
@@ -232,3 +338,33 @@ input, textarea, select {
   opacity: 1;
   transform: translateY(0);
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Custom Scrollbar styled for Gear Catalog / Menus */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: 999px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 102, 0, 0.3) !important;
+  border-radius: 999px !important;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 102, 0, 0.6) !important;
+}
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 102, 0, 0.3) rgba(255, 255, 255, 0.02) !important;
+}
+

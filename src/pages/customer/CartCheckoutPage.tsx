@@ -3,7 +3,7 @@ import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ShoppingCart, Tent, Backpack, Trash2 } from "lucide-react";
+import { ShoppingCart, Tent, Backpack, Trash2, Calendar, MapPin, Receipt, CheckCircle, Package, ShieldAlert } from "lucide-react";
 
 export default function CartCheckoutPage() {
   const { cart, setCart, token, user } = useStore();
@@ -22,13 +22,13 @@ export default function CartCheckoutPage() {
 
   const handleCheckout = async () => {
     if (!startDate || !endDate) {
-      toast.error("Pilih tanggal mulai dan selesai");
+      toast.error("Tentukan periode ekspedisi Anda terlebih dahulu.");
       return;
     }
     const isDemo = user?.isDemo === true;
     const isVerified = user?.isVerified === true;
     if (!isDemo && !isVerified) {
-      toast.error("Upload identitas terlebih dahulu sebelum melakukan penyewaan.");
+      toast.error("Otorisasi Identitas belum terkonfirmasi.");
       return;
     }
     
@@ -46,11 +46,11 @@ export default function CartCheckoutPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
-      toast.success("Checkout berhasil! Silakan lakukan pembayaran");
+      toast.success("Konfigurasi disimpan. Penugasan menunggu pembayaran.");
       setCart([]);
       navigate("/customer/bookings");
     } catch (err: any) {
-      toast.error(err.message || "Gagal checkout");
+      toast.error(err.message || "Gagal mengesahkan reservasi.");
     } finally {
       setLoading(false);
     }
@@ -61,58 +61,99 @@ export default function CartCheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white transition-colors">
+    <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F7F7F7] font-sans selection:bg-[#FF7A00] selection:text-white">
       <Navbar />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 md:py-16 space-y-12 animate-fade-in text-center md:text-left">
-        <header className="pb-8">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">Keranjang & Checkout</h1>
-          <p className="text-stone-400 mt-2 text-sm md:text-base leading-relaxed">
-            Tinjau pesanan Anda, tentukan periode sewa, dan lakukan reservasi resmi.
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 py-[96px] flex flex-col gap-[64px]">
+        <header className="border-b border-white/10 pb-[32px]">
+          <h1 className="text-[32px] md:text-[40px] font-medium tracking-tight mb-2">Penyusunan Logistik</h1>
+          <p className="text-[16px] text-[#BDBDBD] font-light">
+            Tinjau kembali daftar peralatan, atur estimasi pengembalian, dan konfirmasikan modul penyewaan.
           </p>
         </header>
 
         {cart.length === 0 ? (
-          <div className="bg-[#121212] p-12 md:p-16 rounded-3xl text-center max-w-xl mx-auto space-y-6 shadow-lg">
-            <div className="w-16 h-16 bg-[#1a1a1a] rounded-full flex items-center justify-center mx-auto text-[#FF5500]">
-              <ShoppingCart size={28} />
+          <div className="bg-[#151515] border border-white/5 py-[96px] rounded-[24px] text-center max-w-2xl mx-auto w-full flex flex-col items-center">
+            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 text-[#BDBDBD]">
+              <ShoppingCart size={24} />
             </div>
-            <div>
-              <h2 className="text-xl font-bold mb-2 text-white">Keranjang Belum Terisi</h2>
-              <p className="text-sm text-stone-400">Silakan jelajahi katalog kami untuk memilih peralatan petualangan terbaik Anda.</p>
-            </div>
+            <h2 className="text-[20px] font-medium mb-2 text-white">Inventaris Kosong</h2>
+            <p className="text-[14px] text-[#BDBDBD] font-light max-w-[400px] mb-8">
+               Pilih komponen perlengkapan dari modul katalog sebelum menyusun konfigurasi.
+            </p>
             <button 
               onClick={() => navigate('/customer/catalog')} 
-              className="inline-flex items-center justify-center bg-[#FF5500] hover:bg-[#FF3300] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer"
+              className="bg-white text-black hover:bg-[#F7F7F7] px-6 py-3 rounded-[12px] font-medium text-[14px] transition-all cursor-pointer shadow-sm"
             >
-              Buka Katalog
+              Buka Katalog Modul
             </button>
           </div>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2 space-y-8 text-left">
-              <div className="bg-[#121212] p-8 rounded-3xl shadow-lg">
-                <h3 className="text-lg font-bold text-white mb-6 tracking-tight">Daftar Peralatan</h3>
-                <div className="space-y-4">
+          <div className="grid lg:grid-cols-[1fr_400px] gap-8 items-start">
+            
+            {/* Left Col */}
+            <div className="space-y-8">
+              
+              <div className="bg-[#151515] p-[32px] rounded-[24px] border border-white/5">
+                <div className="flex items-center gap-2 text-[#FF7A00] mb-6">
+                  <Calendar size={20} />
+                  <h3 className="text-[16px] font-medium text-white tracking-tight">Cakupan Durasi Penyewaan</h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#BDBDBD] uppercase tracking-wider mb-2">Waktu Pengambilan</label>
+                    <input 
+                      type="date" 
+                      value={startDate}
+                      onChange={e => setStartDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full px-4 py-3 bg-[#1D1D1D] hover:bg-[#252525] border border-white/10 rounded-[12px] text-white text-[14px] focus:outline-none focus:border-[#FF7A00] transition-colors cursor-pointer" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-[#BDBDBD] uppercase tracking-wider mb-2">Estimasi Pengembalian</label>
+                    <input 
+                      type="date" 
+                      value={endDate}
+                      onChange={e => setEndDate(e.target.value)}
+                      min={startDate || new Date().toISOString().split('T')[0]}
+                      className="w-full px-4 py-3 bg-[#1D1D1D] hover:bg-[#252525] border border-white/10 rounded-[12px] text-white text-[14px] focus:outline-none focus:border-[#FF7A00] transition-colors cursor-pointer" 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#151515] p-[32px] rounded-[24px] border border-white/5">
+                <div className="flex items-center gap-2 text-[#FF7A00] mb-6">
+                  <Package size={20} className="hidden" /> {/* just keeping spacing same */}
+                  <div className="w-5 h-5 flex items-center justify-center"><Tent size={20} /></div>
+                  <h3 className="text-[16px] font-medium text-white tracking-tight">Modul Perlengkapan</h3>
+                </div>
+                
+                <div className="flex flex-col gap-4">
                   {cart.map((c, idx) => (
-                    <div key={idx} className="flex gap-4 items-center p-5 bg-[#171717] rounded-2xl transition-all">
-                      <div className="w-12 h-12 bg-[#222] rounded-xl flex items-center justify-center text-[#FF5500] shadow-sm">
-                        {c.item.category?.includes('Tenda') ? <Tent size={20} /> : <Backpack size={20} />}
+                    <div key={idx} className="flex flex-col sm:flex-row gap-4 sm:items-center justify-between p-4 bg-[#1D1D1D] border border-white/5 rounded-2xl">
+                      <div className="flex gap-3 sm:gap-4 items-center">
+                        <div className="w-12 h-12 bg-[#151515] border border-white/15 rounded-xl flex items-center justify-center text-[#BDBDBD] shrink-0">
+                          {c.item.category?.includes('Tenda') ? <Tent size={20} /> : <Backpack size={20} />}
+                        </div>
+                        
+                        <div className="min-w-0">
+                          <h4 className="font-medium text-[15px] sm:text-[16px] text-white leading-tight mb-1 truncate max-w-[180px] sm:max-w-none">{c.item.name}</h4>
+                          <p className="text-[12px] text-[#FF7A00] font-medium font-mono">
+                            Rp {c.item.price_per_day.toLocaleString('id-ID')} / 24 Jam
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-sm md:text-base text-white">{c.item.name}</h4>
-                        <p className="text-xs text-[#FF5500] font-black mt-0.5">
-                          Rp {c.item.price_per_day.toLocaleString()} / Hari
-                        </p>
-                      </div>
-                      <div className="flex gap-4 items-center">
-                        <div className="text-xs font-bold bg-[#222] text-white px-3 py-1.5 rounded-lg">
-                          Qty: {c.qty}
+                      
+                      <div className="flex justify-between sm:justify-end gap-3 items-center border-t border-white/5 pt-3 sm:pt-0 sm:border-0">
+                        <div className="text-[12px] font-medium uppercase tracking-wider bg-black/40 text-[#BDBDBD] px-3 py-1.5 rounded-lg border border-white/5 font-mono">
+                          VOL: {c.qty}
                         </div>
                         <button 
                           onClick={() => removeFromCart(c.item.id)} 
-                          className="text-[#FF5500] hover:text-[#FF3300] font-bold text-xs transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
                         >
-                          Hapus
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
@@ -120,72 +161,57 @@ export default function CartCheckoutPage() {
                 </div>
               </div>
 
-              <div className="bg-[#121212] p-8 rounded-3xl shadow-lg">
-                <h3 className="text-lg font-bold text-white mb-6 tracking-tight">Periode Penyewaan</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Tanggal Mulai</label>
-                    <input 
-                      type="date" 
-                      value={startDate}
-                      onChange={e => setStartDate(e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 rounded-xl bg-black text-white text-sm focus:outline-none transition-all" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Tanggal Kembali</label>
-                    <input 
-                      type="date" 
-                      value={endDate}
-                      onChange={e => setEndDate(e.target.value)}
-                      min={startDate || new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 rounded-xl bg-black text-white text-sm focus:outline-none transition-all" 
-                    />
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <div className="bg-[#121212] p-8 rounded-3xl shadow-lg h-fit sticky top-24 text-left">
-              <h3 className="text-lg font-bold text-white mb-6 tracking-tight">Ringkasan Reservasi</h3>
-              <div className="space-y-4 pb-6 mb-6">
-                <div className="flex justify-between text-xs md:text-sm">
-                  <span className="text-stone-400">Durasi Sewa</span>
-                  <span className="font-bold text-white">{days} Hari</span>
-                </div>
-                <div className="flex justify-between text-xs md:text-sm">
-                  <span className="text-stone-400">Total Item</span>
-                  <span className="font-bold text-white">{cart.reduce((a, c) => a + c.qty, 0)} Unit</span>
-                </div>
-                <div className="flex justify-between text-xs md:text-sm">
-                  <span className="text-stone-400">Cabang Pengambilan</span>
-                  <span className="font-bold text-white">Sembalun Utama</span>
-                </div>
-              </div>
-              <div className="space-y-1 mb-8">
-                <span className="text-xs text-stone-400 font-bold uppercase tracking-wider block">Total Tagihan</span>
-                <span className="text-2xl md:text-3xl font-black text-[#FF5500] block">Rp {totalCost.toLocaleString()}</span>
-              </div>
-              {(!user?.isDemo && !user?.isVerified) ? (
-                <div className="space-y-4">
-                  <button 
-                    onClick={() => navigate('/customer/dashboard')}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold text-sm transition-all cursor-pointer"
-                  >
-                    Lengkapi Verifikasi Sekarang
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  onClick={handleCheckout}
-                  disabled={loading}
-                  className="w-full bg-[#FF5500] hover:bg-[#FF3300] text-white py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer shadow-md"
-                >
-                  {loading ? "Memproses..." : "Konfirmasi Pembokingan"}
-                </button>
-              )}
+            {/* Right Col: Summary Panel */}
+            <div className="sticky top-24">
+               <div className="bg-[#151515] p-[32px] rounded-[24px] border border-[#FF7A00]/20">
+                  <div className="flex items-center gap-2 text-[#FF7A00] mb-6">
+                     <Receipt size={20} />
+                     <h3 className="text-[16px] font-medium text-white tracking-tight">Kalkulasi Sistem</h3>
+                  </div>
+
+                  <div className="flex justify-between items-center py-4 border-b border-white/5 text-[14px]">
+                     <span className="text-[#BDBDBD]">Komponen Sewa</span>
+                     <span className="font-medium text-white">{cart.reduce((a, c) => a + c.qty, 0)} Modul</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-4 border-b border-white/5 text-[14px]">
+                     <span className="text-[#BDBDBD]">Durasi Reservasi</span>
+                     <span className="font-medium text-white">{startDate && endDate ? `${days} Siklus` : '0 Siklus'}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-4 border-b border-white/5 text-[14px]">
+                     <span className="text-[#BDBDBD]">Titik Pengambilan</span>
+                     <span className="font-medium text-white inline-flex items-center gap-1.5"><MapPin size={12} className="text-[#FF7A00]"/> Basecamp Pusat</span>
+                  </div>
+
+                  <div className="mt-8 mb-8">
+                     <span className="text-[10px] text-[#BDBDBD] font-medium uppercase tracking-widest block mb-2">Nilai Tagihan</span>
+                     <span className="text-[32px] font-medium text-[#FF7A00] tracking-tight block">
+                       Rp {totalCost.toLocaleString('id-ID')}
+                     </span>
+                  </div>
+
+                  {(!user?.isDemo && !user?.isVerified) ? (
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-[12px] mb-4">
+                       <p className="text-[12px] text-red-400 font-light flex gap-2">
+                          <ShieldAlert size={16} className="shrink-0" />
+                          <span>Otorisasi pengguna gagal. Mohon unggah dokumen identitas pada laman Manajemen Akun.</span>
+                       </p>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={handleCheckout}
+                      disabled={loading}
+                      className="w-full bg-white hover:bg-[#F7F7F7] text-black py-4 rounded-[12px] font-medium text-[14px] transition-all disabled:opacity-50 cursor-pointer shadow-sm flex items-center justify-center gap-2"
+                    >
+                      {loading ? "Menyinkronkan Server..." : <><CheckCircle size={16} /> Otorisasi Penugasan</>}
+                    </button>
+                  )}
+               </div>
             </div>
+
           </div>
         )}
       </main>

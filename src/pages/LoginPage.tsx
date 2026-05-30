@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../store";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "motion/react";
-import { Server, User, Briefcase, Lock, ShieldCheck, Mail, Sparkles } from "lucide-react";
+import { Server, User, ArrowRight, Shield } from "lucide-react";
 
-type LoginTab = "customer" | "owner" | "demo";
+type LoginTab = "customer" | "admin" | "demo";
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState<LoginTab>("customer");
@@ -15,7 +15,6 @@ export default function LoginPage() {
   const { setAuth } = useStore();
   const navigate = useNavigate();
 
-  // Pre-fill credentials helper for testing
   const handlePreFill = (emailVal: string, passVal: string) => {
     setEmail(emailVal);
     setPassword(passVal);
@@ -35,13 +34,13 @@ export default function LoginPage() {
       try {
         data = await res.json();
       } catch (jsonErr) {
-        throw new Error("Server mengirimkan respon tidak valid. Sila coba beberapa saat lagi.");
+        throw new Error("Server respon tidak valid.");
       }
       
       if (!res.ok) throw new Error(data.error || "Gagal masuk");
       
       setAuth(data.user, data.token);
-      toast.success("Login berhasil");
+      toast.success("Otentikasi Berhasil");
       
       const userRoleLower = data.user.role.toLowerCase();
       if (userRoleLower === 'admin' || userRoleLower === 'super_admin' || userRoleLower === 'demo_admin') {
@@ -69,13 +68,13 @@ export default function LoginPage() {
       try {
         data = await res.json();
       } catch (jsonErr) {
-        throw new Error("Server mengirimkan respon tidak valid saat memproses akun Demo.");
+        throw new Error("Server respon tidak valid.");
       }
       
-      if (!res.ok) throw new Error(data.error || "Gagal masuk ke simulasi");
+      if (!res.ok) throw new Error(data.error || "Gagal masuk");
       
       setAuth(data.user, data.token);
-      toast.success(`Berhasil masuk sebagai Demo ${role === 'admin' ? 'Admin' : 'Pelanggan'}`);
+      toast.success(`Otentikasi Demo ${role === 'admin' ? 'Admin' : 'Pelanggan'} Berhasil`);
       
       if (role === 'admin') {
         navigate('/admin/dashboard');
@@ -90,192 +89,177 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-black text-white transition-colors">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-full max-w-md bg-[#121212] rounded-3xl p-8 shadow-2xl"
-      >
-        <div className="text-center mb-6">
-          <Link to="/" className="text-2xl font-black tracking-tight text-white uppercase">
-            OUT<span className="text-[#FF5500]">RENT</span>.
-          </Link>
-          <p className="text-stone-400 mt-2 text-xs font-bold">Sistem Outdoor Premium Terpadu</p>
-        </div>
+    <div className="h-screen w-screen overflow-hidden flex text-[#F7F7F7] bg-gradient-to-br from-[#070708] via-[#0D1016] to-[#08090C] font-sans selection:bg-[#FF7A00] selection:text-white">
+      {/* Visual Identity Section */}
+      <div className="hidden lg:flex flex-1 relative flex-col justify-between p-12 xl:p-16 overflow-hidden bg-gradient-to-b from-[#0D1016] to-[#070708] border-r border-white/5">
+         <Link to="/" className="text-[20px] xl:text-[24px] font-semibold tracking-tight z-10 flex items-center gap-2">
+            OUTRENT<span className="text-[#FF7A00]">.</span>
+         </Link>
+         
+         <div className="relative z-10 max-w-[460px]">
+            <h2 className="text-[38px] xl:text-[48px] font-medium leading-[1.1] tracking-[-0.03em] mb-4">
+              Infrastruktur <br/> Penyewaan Ekspedisi.
+            </h2>
+            <p className="text-[15px] xl:text-[17px] text-[#BDBDBD] font-light leading-[1.5]">
+              Akses sistem untuk mengelola operasional atau merencanakan penjelajahan Anda berikutnya.
+            </p>
+         </div>
 
-        {/* Liquid Glass Styled Tab Selector */}
-        <div className="grid grid-cols-3 p-1 bg-black rounded-2xl mb-6">
-          <button
-            onClick={() => { setActiveTab("customer"); setEmail(""); setPassword(""); }}
-            className={`flex flex-col items-center gap-1 py-2 rounded-xl text-[11px] font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "customer" 
-                ? "bg-[#FF5500] text-white shadow-sm"
-                : "text-stone-400 hover:text-white"
-            }`}
-          >
-            <User size={15} />
-            Pelanggan
-          </button>
-          
-          <button
-            onClick={() => { setActiveTab("owner"); setEmail(""); setPassword(""); }}
-            className={`flex flex-col items-center gap-1 py-2 rounded-xl text-[11px] font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "owner" 
-                ? "bg-[#FF5500] text-white shadow-sm"
-                : "text-stone-400 hover:text-white"
-            }`}
-          >
-            <Briefcase size={15} />
-            Pemilik
-          </button>
+         {/* Abstract background graphics representing structure/mountains */}
+         <div className="absolute top-[20%] right-[-20%] w-[800px] h-[800px] rounded-full border-[1px] border-white/5" />
+         <div className="absolute top-[30%] right-[-10%] w-[600px] h-[600px] rounded-full border-[1px] border-white/5" />
+         <div className="absolute bottom-[0%] left-[-10%] w-[400px] h-[400px] rounded-full bg-gradient-to-t from-[#FF7A00]/5 to-transparent blur-[100px]" />
+      </div>
 
-          <button
-            onClick={() => { setActiveTab("demo"); }}
-            className={`flex flex-col items-center gap-1 py-2 rounded-xl text-[11px] font-bold uppercase transition-all cursor-pointer ${
-              activeTab === "demo" 
-                ? "bg-[#FF5500] text-white shadow-sm"
-                : "text-stone-400 hover:text-white"
-            }`}
-          >
-            <Sparkles size={15} />
-            Demo Sandbox
-          </button>
-        </div>
-
-        {/* Dynamic Forms */}
-        <AnimatePresence mode="wait">
-          {activeTab !== "demo" ? (
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, x: activeTab === "customer" ? -6 : 6 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <label className="block text-[10px] font-extrabold mb-1.5 text-stone-400 uppercase tracking-widest flex items-center gap-1.5">
-                    <Mail size={12} className="text-[#FF5500]" />
-                    Alamat Email Resmi
-                  </label>
-                  <input 
-                    type="email" 
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder={activeTab === "customer" ? "pelanggan@outrent.com" : "owner@outrent.com"}
-                    className="w-full px-4 py-3 rounded-xl bg-black text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#FF5500]"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-[10px] font-extrabold mb-1.5 text-stone-400 uppercase tracking-widest flex items-center gap-1.5">
-                    <Lock size={12} className="text-[#FF5500]" />
-                    Kata Sandi Akun
-                  </label>
-                  <input 
-                    type="password" 
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-xl bg-black text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#FF5500]"
-                    required
-                  />
-                </div>
-
-                {/* Pre-fill Helper Box */}
-                {activeTab === "customer" ? (
-                  <div className="p-3 bg-black rounded-xl flex flex-col gap-1 text-[11px] text-stone-400">
-                    <p className="font-extrabold text-[#FF5500]">Akun Uji Coba Pelanggan Asli:</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span>email: pelanggan@outrent.com</span>
-                      <button 
-                        type="button"
-                        onClick={() => handlePreFill("pelanggan@outrent.com", "pelanggan123")}
-                        className="text-[#FF5500] font-black hover:underline cursor-pointer"
-                      >
-                        Gunakan
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-3 bg-black rounded-xl flex flex-col gap-1 text-[11px] text-stone-400">
-                    <p className="font-extrabold text-[#FF5500]">Akun Pemilik Usaha Asli:</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span>email: owner@outrent.com</span>
-                      <button 
-                        type="button"
-                        onClick={() => handlePreFill("owner@outrent.com", "owner123")}
-                        className="text-[#FF5500] font-black hover:underline cursor-pointer"
-                      >
-                        Gunakan
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full py-3 rounded-xl bg-[#FF5500] hover:bg-[#FF3300] text-white transition-all font-bold text-xs uppercase tracking-wider disabled:opacity-50 mt-4 cursor-pointer active:scale-95 flex items-center justify-center gap-2 shadow-md"
-                >
-                  <Lock size={14} />
-                  {loading ? "Menghubungkan..." : "Masuk Operasional"}
-                </button>
-              </form>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="demo"
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="space-y-4 animate-fade-in"
-            >
-              <div className="p-3 bg-black text-stone-400 rounded-xl text-[11px] leading-relaxed text-center">
-                Mode Demo membolehkan Anda mengeksplorasi seluruh fitur canggih OUTRENT secara langsung menggunakan dataset simulasi terisolasi.
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 text-left">
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('admin')}
-                  className="flex flex-col items-center justify-center p-4 rounded-xl bg-black hover:bg-[#1a1a1a] transition-all cursor-pointer group"
-                >
-                  <Server size={28} className="text-[#FF5500] mb-2 group-hover:scale-105 transition-transform" />
-                  <span className="text-[12px] font-bold text-white">SIMULASI DEMO ADMIN</span>
-                  <span className="text-[10px] text-stone-400 mt-1">Uji coba instan panel pelacakan &amp; kontrol admin</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin('customer')}
-                  className="flex flex-col items-center justify-center p-4 rounded-xl bg-black hover:bg-[#1a1a1a] transition-all cursor-pointer group"
-                >
-                  <User size={28} className="text-[#FF5500] mb-2 group-hover:scale-105 transition-transform" />
-                  <span className="text-[12px] font-bold text-white">SIMULASI DEMO PELANGGAN</span>
-                  <span className="text-[10px] text-stone-400 mt-1">Uji coba checkout, unggah dokumen, &amp; pembayaran</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-stone-800" />
+      {/* Auth Panel */}
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-4 sm:p-8 xl:p-12 relative overflow-y-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[420px] sm:max-w-[450px] flex flex-col p-6 sm:p-8 rounded-2xl border border-white/10 shadow-[0_32px_64px_rgba(0,0,0,0.85)] liquid-glass-card my-auto"
+        >
+          <div className="lg:hidden mb-4 text-center">
+             <Link to="/" className="text-[22px] font-semibold tracking-tight inline-flex items-center gap-2">
+                OUTRENT<span className="text-[#FF7A00]">.</span>
+             </Link>
           </div>
-          <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
-            <span className="bg-black text-stone-400 px-3">Atau</span>
-          </div>
-        </div>
 
-        <p className="text-center text-xs text-stone-400 font-medium">
-          Belum punya akun? <Link to="/register" className="text-[#FF5500] font-bold hover:underline">Daftar pelanggan baru</Link>
-        </p>
-      </motion.div>
+          <h3 className="text-[24px] sm:text-[28px] font-medium tracking-tight mb-4 text-center lg:text-left">Selamat Datang</h3>
+
+          {/* Simple Clean Tabs */}
+          <div className="flex justify-center lg:justify-start gap-4 border-b border-white/10 mb-5 pb-0.5">
+             <button 
+               onClick={() => setActiveTab("customer")}
+               className={`pb-2 text-[13px] sm:text-[14px] font-medium transition-colors cursor-pointer ${activeTab === 'customer' ? 'text-white border-b-2 border-white' : 'text-[#BDBDBD] hover:text-white'}`}
+             >
+               Pelanggan
+             </button>
+             <button 
+               onClick={() => setActiveTab("admin")}
+               className={`pb-2 text-[13px] sm:text-[14px] font-medium transition-colors cursor-pointer ${activeTab === 'admin' ? 'text-white border-b-2 border-white' : 'text-[#BDBDBD] hover:text-white'}`}
+             >
+               Admin Operator
+             </button>
+             <button 
+               onClick={() => setActiveTab("demo")}
+               className={`pb-2 text-[13px] sm:text-[14px] font-medium transition-colors cursor-pointer ${activeTab === 'demo' ? 'text-[#FF7A00] border-b-2 border-[#FF7A00]' : 'text-[#BDBDBD] hover:text-[#FF7A00]'}`}
+             >
+               Simulasi Demo
+             </button>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {activeTab !== "demo" ? (
+              <motion.form 
+                key={activeTab}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.15 }}
+                onSubmit={handleLogin} 
+                className="flex flex-col gap-4"
+              >
+                 <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#BDBDBD] uppercase tracking-wider">
+                      Alamat Email
+                    </label>
+                    <input 
+                      type="email" 
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder={activeTab === "customer" ? "nama@domain.com" : "admin@outrent.com"}
+                      className="bg-black/40 border border-white/15 py-2.5 px-4 rounded-xl text-[15px] text-white focus:outline-none focus:border-[#FF7A00] transition-colors"
+                      required
+                    />
+                 </div>
+                 <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#BDBDBD] uppercase tracking-wider">
+                      Kata Sandi
+                    </label>
+                    <input 
+                      type="password" 
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="bg-black/40 border border-white/15 py-2.5 px-4 rounded-xl text-[15px] text-white focus:outline-none focus:border-[#FF7A00] transition-colors"
+                      required
+                    />
+                 </div>
+
+                 {/* Development Helper for Testing */}
+                 <div className="flex justify-between items-center bg-white/5 py-2.5 px-4 rounded-xl border border-white/5">
+                   <div className="text-[11px] text-[#BDBDBD] font-light">
+                     Akun testing tersedia:
+                   </div>
+                   <button 
+                      type="button"
+                      onClick={() => handlePreFill(
+                        activeTab === 'customer' ? "pelanggan@outrent.com" : "owner@outrent.com",
+                        activeTab === 'customer' ? "pelanggan123" : "owner123"
+                      )}
+                      className="text-[11px] text-[#FF7A00] font-medium hover:text-white transition-colors cursor-pointer"
+                   >
+                     Isi Otomatis
+                   </button>
+                 </div>
+
+                 <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="mt-1 w-full bg-white hover:bg-[#F7F7F7] text-black py-2.5 px-4 rounded-xl font-medium text-[15px] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                 >
+                    {loading ? "Menghubungkan..." : "Masuk ke Sistem"}
+                    {!loading && <ArrowRight size={16} />}
+                 </button>
+              </motion.form>
+            ) : (
+              <motion.div
+                key="demo"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.15 }}
+                className="flex flex-col gap-3.5"
+              >
+                 <div className="text-[13px] text-[#BDBDBD] font-light leading-[1.5] text-center lg:text-left">
+                   Eksplorasi sistem secara instan menggunakan dataset simulasi yang terisolasi. Pilih perspektif untuk memulai.
+                 </div>
+
+                 <button
+                    onClick={() => handleDemoLogin('customer')}
+                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors group text-left cursor-pointer"
+                 >
+                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-[#FF7A00]/20 transition-colors shrink-0">
+                      <User size={20} className="text-[#BDBDBD] group-hover:text-[#FF7A00]" />
+                    </div>
+                    <div>
+                       <div className="text-[14px] font-medium text-white mb-0.5">Simulasi Pelanggan</div>
+                       <div className="text-[12px] text-[#BDBDBD] font-light">Eksplorasi katalog dan booking.</div>
+                    </div>
+                 </button>
+
+                 <button
+                    onClick={() => handleDemoLogin('admin')}
+                    className="flex items-center gap-4 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors group text-left cursor-pointer"
+                 >
+                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-[#FF7A00]/20 transition-colors shrink-0">
+                      <Shield size={20} className="text-[#BDBDBD] group-hover:text-[#FF7A00]" />
+                    </div>
+                    <div>
+                       <div className="text-[14px] font-medium text-white mb-0.5">Simulasi Admin Server</div>
+                       <div className="text-[12px] text-[#BDBDBD] font-light">Kelola operasional dan persetujuan.</div>
+                    </div>
+                 </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="mt-5 text-center text-[13px] text-[#BDBDBD]/80 font-light border-t border-white/10 pt-4">
+             Belum memiliki mandat akses? <Link to="/register" className="text-white font-medium hover:text-[#FF7A00] transition-colors text-shadow-sm">Permintaan pembuatan akun.</Link>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ export const Footer: React.FC<FooterProps> = ({ setPage }) => {
     { name: "Gallery Petualang", id: "gallery_petualang" },
     { name: "Cara Booking", id: "cara_booking" },
     { name: "Syarat & Ketentuan", id: "syarat_ketentuan" },
+    { name: "Tentang Kami", id: "tentang_kami" },
     { name: "Pusat Bantuan", id: "pusat_bantuan" },
     { name: "Kontak Person", id: "kontak_person" },
   ];
@@ -45,6 +46,7 @@ export const Footer: React.FC<FooterProps> = ({ setPage }) => {
 
           {/* Links */}
           <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            <button onClick={() => handleNav("tentang_kami")} className="text-[14px] font-medium text-[#a3b8a1] hover:text-white transition-colors duration-200">Tentang Kami</button>
             <button onClick={() => handleNav("katalog_utama")} className="text-[14px] font-medium text-[#a3b8a1] hover:text-white transition-colors duration-200">Katalog</button>
             <button onClick={() => handleNav("cara_booking")} className="text-[14px] font-medium text-[#a3b8a1] hover:text-white transition-colors duration-200">Booking</button>
             <button onClick={() => handleNav("pusat_bantuan")} className="text-[14px] font-medium text-[#a3b8a1] hover:text-white transition-colors duration-200">Bantuan</button>

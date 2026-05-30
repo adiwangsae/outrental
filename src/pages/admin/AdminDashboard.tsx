@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
 import { toast } from "react-toastify";
@@ -116,6 +116,14 @@ export default function AdminDashboard() {
       setSyncing(false);
     }
   };
+
+  // Handle active tab change scroll to top
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     fetchData();
@@ -470,7 +478,7 @@ export default function AdminDashboard() {
 
       // Colors
       const primaryColor = [18, 18, 18]; // #121212 (Charcoal Black)
-      const accentColor = [255, 85, 0]; // #FF5500 (Orange)
+      const accentColor = [255, 85, 0]; // #FF7A00 (Orange)
       const textDark = [31, 41, 55]; // #1f2937
       const textLight = [156, 163, 175]; // #9ca3af
 
@@ -603,37 +611,41 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-900 text-neutral-100 transition-colors font-sans antialiased">
-      <Navbar />
+    <div className="h-screen flex flex-col bg-[#0B0B0B] text-[#F7F7F7] font-sans antialiased overflow-hidden">
+      <div className="shrink-0 z-50">
+        <Navbar />
+      </div>
 
       {/* Screen Container with Sidebar and Content Panel */}
-      <div className="flex-1 flex flex-col lg:flex-row w-full relative">
+      <div className="flex-1 flex flex-col lg:flex-row w-full relative overflow-hidden">
         
         {/* Left Fixed Sidebar - Desktop (or Toggleable side-drawer in Mobile) */}
         <aside className={`
-          fixed inset-y-0 left-0 z-40 w-64 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] bg-[#0d110e]/95 backdrop-blur-md border-r border-[#1a231c]/60 p-5 flex flex-col justify-between overflow-y-auto
-          transition-transform lg:translate-x-0 duration-300 ease-in-out mt-16 lg:mt-0
+          absolute lg:relative inset-y-0 left-0 z-40 w-64 h-full bg-[#151515] border-r border-[#1D1D1D] p-5 flex flex-col justify-between overflow-y-auto
+          transition-transform lg:translate-x-0 duration-300 ease-in-out shrink-0
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
-          <div className="space-y-6">
+          <div className="space-y-8">
             
             {/* Owner/Business metadata badge inside sidebar */}
-            <div className="bg-neutral-900 border border-neutral-800 p-4 rounded-xl space-y-1.5 shadow-inner">
+            <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-5 rounded-2xl space-y-2 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF5500] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF5500]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FF5500]">
-                  {user?.isDemo ? "SILICON SANDBOX" : "OPERASIONAL ASLI"}
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#BDBDBD]">
+                  {user?.isDemo ? "DEMO MODE" : "SYSTEM ONLINE"}
                 </span>
               </div>
-              <p className="text-xs font-bold text-neutral-100 truncate">{user?.name || "Pemilik Usaha"}</p>
-              <p className="text-[11px] text-stone-500 truncate leading-none">{user?.email}</p>
+              <div>
+                <p className="text-sm font-bold text-[#F7F7F7] truncate">{user?.name || "Administrator"}</p>
+                <p className="text-[11px] text-[#BDBDBD] truncate">{user?.email}</p>
+              </div>
             </div>
 
             {/* Menu Items List */}
-            <nav className="space-y-1.5" aria-label="Sidebar Navigation">
+            <nav className="space-y-2" aria-label="Sidebar Navigation">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -645,18 +657,18 @@ export default function AdminDashboard() {
                       setMobileMenuOpen(false);
                     }}
                     className={`
-                      w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer select-none
+                      w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer select-none
                       ${isActive 
-                        ? 'bg-[#FF5500] text-white' 
-                        : 'text-stone-400 hover:bg-[#121212] hover:text-white'}
+                        ? 'bg-[#1D1D1D] text-[#F7F7F7] shadow-sm' 
+                        : 'text-[#BDBDBD] hover:bg-[#0B0B0B] hover:text-[#F7F7F7]'}
                     `}
                   >
                     <div className="flex items-center gap-3">
-                      <Icon size={15} />
+                      <Icon size={16} className={isActive ? "text-[#F7F7F7]" : "text-[#BDBDBD]"} />
                       <span>{item.label}</span>
                     </div>
                     {item.badge !== undefined && (
-                      <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${isActive ? 'bg-white text-[#FF5500]' : 'bg-[#FF5500]/15 text-[#FF5500]'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isActive ? 'bg-[#F7F7F7] text-[#0B0B0B]' : 'bg-[#1D1D1D] text-[#F7F7F7]'}`}>
                         {item.badge}
                       </span>
                     )}
@@ -664,43 +676,44 @@ export default function AdminDashboard() {
                 );
               })}
 
-              {/* Logout Action in the navigation loop */}
-              <button
-                onClick={handleLogoutAction}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-all cursor-pointer select-none border border-transparent hover:border-red-500/10"
-              >
-                <LogOut size={15} />
-                <span>Logout</span>
-              </button>
+              <div className="pt-4 mt-4 border-t border-[#1D1D1D]">
+                <button
+                  onClick={handleLogoutAction}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-red-400 hover:bg-red-500/10 transition-all cursor-pointer select-none"
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              </div>
             </nav>
           </div>
 
           {/* Footer inside sidebar */}
-          <div className="pt-4 border-t border-[#1a231c] text-[10px] text-stone-600 font-mono flex flex-col gap-1 select-none">
-            <p>V1.4.2 &bull; COMPLIANT</p>
-            <p>OUTRENT CONTROL CENTER</p>
+          <div className="pt-6 border-t border-[#1D1D1D] text-[10px] text-[#BDBDBD] font-mono flex flex-col gap-1 select-none opacity-60">
+            <p>V1.5.0 &bull; ONLINE</p>
+            <p>OUTRENT ADMIN</p>
           </div>
         </aside>
 
-        {/* Mobile Subheader Navigation Header bar - Sticky so it is never left behind on scroll */}
-        <div className="lg:hidden sticky top-16 w-full bg-neutral-950/95 backdrop-blur-md border-b border-neutral-800 px-4 py-3 flex justify-between items-center z-30 select-none shadow-sm">
+        {/* Mobile Subheader Navigation Header bar */}
+        <div className="lg:hidden shrink-0 w-full bg-[#151515] border-b border-[#1D1D1D] px-4 py-3 flex justify-between items-center z-30 select-none shadow-sm absolute top-0">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-neutral-200 hover:text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#FF5500] cursor-pointer"
+            className="p-2 text-[#F7F7F7] bg-[#1D1D1D] rounded-lg focus:outline-none cursor-pointer"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
           
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#FF5500] flex items-center gap-1.5 bg-neutral-950 border border-neutral-800 px-2.5 py-1 rounded-md">
-            Tab: <b className="text-white">{menuItems.find(m => m.id === activeTab)?.label}</b>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-[#BDBDBD] flex items-center gap-2">
+            Control Center: <b className="text-[#F7F7F7]">{menuItems.find(m => m.id === activeTab)?.label}</b>
           </span>
 
           <button 
             onClick={() => fetchData()}
             disabled={syncing}
-            className="p-2 text-neutral-200 hover:text-white rounded-lg cursor-pointer flex items-center"
+            className="p-2 text-[#F7F7F7] bg-[#1D1D1D] rounded-lg flex items-center cursor-pointer"
           >
-            <RefreshCw size={16} className={syncing ? "animate-spin text-[#FF5500]" : ""} />
+            <RefreshCw size={14} className={syncing ? "animate-spin text-[#F7F7F7]" : ""} />
           </button>
         </div>
 
@@ -708,41 +721,41 @@ export default function AdminDashboard() {
         {mobileMenuOpen && (
           <div 
             onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/60 z-30 lg:hidden backdrop-blur-xs transition-opacity mt-16"
+            className="fixed inset-0 bg-[#0B0B0B]/80 z-30 lg:hidden transition-opacity"
           />
         )}
 
         {/* Primary Operational Content Window */}
-        <main className="flex-1 p-4 md:p-8 space-y-8 overflow-y-auto max-w-full bg-[#0a0d0a]/95 text-stone-105">
+        <main ref={mainRef} className="flex-1 p-5 md:p-10 space-y-8 overflow-y-auto w-full bg-[#0B0B0B] text-[#F7F7F7] lg:pt-10 pt-20">
           
           {/* Top Info Ribbon */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#0d110e]/90 border border-[#1a231c] px-5 py-4 rounded-2xl shadow-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1D1D1D] pb-6">
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                <span>{menuItems.find(m => m.id === activeTab)?.label} Control Panel</span>
+              <h2 className="text-2xl font-bold text-[#F7F7F7] tracking-tight">
+                {menuItems.find(m => m.id === activeTab)?.label}
               </h2>
-              <p className="text-xs text-stone-500 mt-0.5">
-                Konfigurasi operasional sewa alat gunung. Terakhir disinkronisasi: <b className="text-stone-300 font-mono">{lastUpdated || "Menghubungkan..."}</b>
+              <p className="text-xs text-[#BDBDBD] mt-1 font-mono uppercase tracking-widest">
+                Last Sync: {lastUpdated || "Connecting..."}
               </p>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button 
                 onClick={() => fetchData()}
                 disabled={syncing}
-                className="px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-neutral-900 text-stone-300 rounded-xl border border-neutral-800 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="px-4 py-2.5 text-xs font-semibold bg-[#151515] hover:bg-[#1D1D1D] text-[#F7F7F7] rounded-xl border border-[#1D1D1D] transition-colors flex items-center gap-2 cursor-pointer active:scale-95"
               >
-                <RefreshCw size={11} className={syncing ? "animate-spin text-[#FF5500]" : ""} />
-                {syncing ? "Sinkronisasi..." : "Refresh"}
+                <RefreshCw size={14} className={syncing ? "animate-spin" : ""} />
+                {syncing ? "Syncing..." : "Refresh"}
               </button>
               
               {activeTab === 'reports' && (
                 <button 
                   onClick={downloadPDFReport}
-                  className="px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider bg-[#FF5500] hover:bg-[#FF3300] text-white rounded-xl transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-md shadow-[#FF5500]/10 border border-[#FF5500]/20"
+                  className="px-4 py-2.5 text-xs font-semibold bg-[#F7F7F7] text-[#0B0B0B] hover:bg-[#E0E0E0] rounded-xl transition-colors flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm"
                 >
-                  <FileText size={11} />
-                  Print / Save PDF
+                  <FileText size={14} />
+                  Export PDF
                 </button>
               )}
             </div>
@@ -752,7 +765,7 @@ export default function AdminDashboard() {
           {loading ? (
             <div className="space-y-6">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-neutral-950/40 border border-neutral-800/80 rounded-2xl p-6 md:p-8 flex flex-col lg:flex-row gap-6 animate-pulse">
+                <div key={i} className="bg-[#151515]/40 border border-white/10/80 rounded-2xl p-6 md:p-8 flex flex-col lg:flex-row gap-6 animate-pulse">
                   <div className="flex-1 space-y-4">
                     <div className="h-4 w-1/4 bg-neutral-800 rounded"></div>
                     <div className="h-6 w-1/3 bg-neutral-800 rounded"></div>
@@ -769,192 +782,153 @@ export default function AdminDashboard() {
               {activeTab === 'dashboard' && (
                 <div className="space-y-8">
                   {/* Performance Bento Grid */}
-                  <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 font-sans">
+                  <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 font-sans">
                     <div 
                       onClick={() => setActiveTab('customer')}
-                      className="bg-[#121212] hover:bg-neutral-900 border border-neutral-800 p-5 rounded-2xl shadow-xs transition-colors hover:border-[#FF5500]/40 cursor-pointer"
+                      className="group bg-[#151515] border border-[#1D1D1D] hover:border-[#F7F7F7]/20 p-6 rounded-2xl transition-all cursor-pointer shadow-sm relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start text-[#FF5500]">
-                        <span className="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">Antrean Verif KTP</span>
-                        <ShieldCheck size={16} />
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <ShieldCheck size={64} />
                       </div>
-                      <p className="text-3xl font-extrabold text-[#faf9f6]/95 mt-3">{activeVerificationsNum}</p>
-                      <p className="text-[11px] text-stone-500 mt-1">Dokumen KTP pending disetujui</p>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[11px] font-bold text-[#BDBDBD] uppercase tracking-widest leading-relaxed block w-24">Verifikasi KTP</span>
+                        <div className="bg-[#1D1D1D] p-2 rounded-lg text-[#F7F7F7]">
+                          <ShieldCheck size={18} />
+                        </div>
+                      </div>
+                      <p className="text-4xl font-bold text-[#F7F7F7] mt-6">{activeVerificationsNum}</p>
+                      <p className="text-xs text-[#BDBDBD] mt-2">Menunggu persetujuan</p>
                     </div>
 
                     <div 
                       onClick={() => setActiveTab('payment_verification')}
-                      className="bg-[#121212] hover:bg-neutral-900 border border-neutral-800 p-5 rounded-2xl shadow-xs transition-colors hover:border-[#FF5500]/40 cursor-pointer"
+                      className="group bg-[#151515] border border-[#1D1D1D] hover:border-[#F7F7F7]/20 p-6 rounded-2xl transition-all cursor-pointer shadow-sm relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start text-[#FF5500]">
-                        <span className="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">Verif Bayar</span>
-                        <CreditCard size={16} />
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <CreditCard size={64} />
                       </div>
-                      <p className="text-3xl font-extrabold text-[#faf9f6]/95 mt-3">{pendingPaymentsNum}</p>
-                      <p className="text-[11px] text-stone-500 mt-1">Bukti transfer baru masuk</p>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[11px] font-bold text-[#BDBDBD] uppercase tracking-widest leading-relaxed block w-24">Cek Pembayaran</span>
+                        <div className="bg-[#1D1D1D] p-2 rounded-lg text-[#F7F7F7]">
+                          <CreditCard size={18} />
+                        </div>
+                      </div>
+                      <p className="text-4xl font-bold text-[#F7F7F7] mt-6">{pendingPaymentsNum}</p>
+                      <p className="text-xs text-[#BDBDBD] mt-2">Bukti transfer masuk</p>
                     </div>
 
                     <div 
                       onClick={() => setActiveTab('inventory')}
-                      className="bg-[#121212] hover:bg-neutral-900 border border-neutral-800 p-5 rounded-2xl shadow-xs transition-colors hover:border-[#FF5500]/40 cursor-pointer"
+                      className="group bg-[#151515] border border-[#1D1D1D] hover:border-[#F7F7F7]/20 p-6 rounded-2xl transition-all cursor-pointer shadow-sm relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start text-[#FF5500]">
-                        <span className="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">Stok Kritis (≤1)</span>
-                        <Layers size={16} />
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Layers size={64} />
                       </div>
-                      <p className="text-3xl font-extrabold text-[#faf9f6]/95 mt-3">{criticalStockNum}</p>
-                      <p className="text-[11px] text-stone-500 mt-1">Unit katalog hampir habis</p>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[11px] font-bold text-[#BDBDBD] uppercase tracking-widest leading-relaxed block w-24">Stok Kritis</span>
+                        <div className={`p-2 rounded-lg ${criticalStockNum > 0 ? 'bg-red-500/10 text-red-400' : 'bg-[#1D1D1D] text-[#F7F7F7]'}`}>
+                          <Layers size={18} />
+                        </div>
+                      </div>
+                      <p className="text-4xl font-bold text-[#F7F7F7] mt-6">{criticalStockNum}</p>
+                      <p className="text-xs text-[#BDBDBD] mt-2">Unit tersedia ≤ 1</p>
                     </div>
 
                     <div 
                       onClick={() => setActiveTab('maintenance')}
-                      className="bg-[#121212] hover:bg-neutral-900 border border-neutral-800 p-5 rounded-2xl shadow-xs transition-colors hover:border-[#FF5500]/40 cursor-pointer"
+                      className="group bg-[#151515] border border-[#1D1D1D] hover:border-[#F7F7F7]/20 p-6 rounded-2xl transition-all cursor-pointer shadow-sm relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start text-[#FF5500]">
-                        <span className="text-[10px] font-extrabold text-stone-400 uppercase tracking-widest">Perawatan Aktif</span>
-                        <Wrench size={16} />
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Wrench size={64} />
                       </div>
-                      <p className="text-3xl font-extrabold text-[#faf9f6]/95 mt-3">{totalInMaintenance}</p>
-                      <p className="text-[11px] text-stone-500 mt-1">Goresan/pencucian unit aktif</p>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[11px] font-bold text-[#BDBDBD] uppercase tracking-widest leading-relaxed block w-24">Dalam Perawatan</span>
+                        <div className="bg-[#1D1D1D] p-2 rounded-lg text-[#F7F7F7]">
+                          <Wrench size={18} />
+                        </div>
+                      </div>
+                      <p className="text-4xl font-bold text-[#F7F7F7] mt-6">{totalInMaintenance}</p>
+                      <p className="text-xs text-[#BDBDBD] mt-2">Sedang diperbaiki</p>
                     </div>
                   </section>
 
-                  {/* Graphical Trend Representation and Quick Stats */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     {/* Visual Line Chart representing income */}
-                    <div className="lg:col-span-2 bg-[#121212] border border-neutral-800 p-6 rounded-2xl space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-bold text-[#faf9f6]/90 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                          <TrendingUp size={15} className="text-[#FF5500]" /> Tren Pendapatan Sewa (Simulasi Grafik)
-                        </h3>
-                        <span className="text-[10px] bg-neutral-950 text-[#FF5500] px-2.5 py-0.5 rounded-full font-bold">Rupiah Bersih</span>
+                    <div className="xl:col-span-2 bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl flex flex-col justify-between">
+                      <div className="flex justify-between items-start mb-8">
+                        <div>
+                          <h3 className="text-sm font-bold text-[#F7F7F7] uppercase tracking-widest font-mono">Revenue Trend</h3>
+                          <p className="text-xs text-[#BDBDBD] mt-1">Simulasi grafik pendapatan 30 hari terakhir</p>
+                        </div>
+                        <span className="text-[11px] bg-[#1D1D1D] text-[#BDBDBD] px-3 py-1 rounded-full font-semibold">IDR (Ribuan)</span>
                       </div>
                       
-                      {/* SVGs stylized line graph representation */}
-                      <div className="pt-6 relative h-48 flex flex-col justify-between">
-                        <div className="absolute inset-x-0 top-1/2 border-t border-neutral-800/35" />
-                        <div className="absolute inset-x-0 top-1/4 border-t border-neutral-800/15" />
+                      <div className="relative h-56 flex flex-col justify-end">
+                        <div className="absolute inset-x-0 top-0 border-t border-[#1D1D1D]" />
+                        <div className="absolute inset-x-0 top-1/3 border-t border-[#1D1D1D]" />
+                        <div className="absolute inset-x-0 top-2/3 border-t border-[#1D1D1D]" />
+                        <div className="absolute inset-x-0 bottom-6 border-t border-[#1D1D1D]" />
                         
-                        {/* Line Graph */}
-                        <svg className="w-full h-36" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        {/* Line Graph SVG */}
+                        <svg className="w-full h-44 z-10" viewBox="0 0 100 40" preserveAspectRatio="none">
                           <path
-                            d="M0,28 Q15,22 30,14 T60,18 T90,8 T100,2"
+                            d="M0,35 Q15,20 30,28 T60,15 T90,8 T100,2"
                             fill="none"
-                            stroke="url(#neon-orange)"
-                            strokeWidth="1.5"
+                            stroke="#F7F7F7"
+                            strokeWidth="2"
+                            vectorEffect="non-scaling-stroke"
                           />
                           <path
-                            d="M0,28 Q15,22 30,14 T60,18 T90,8 T100,2 L100,30 L0,30 Z"
-                            fill="url(#orange-gradient)"
-                            opacity="0.10"
+                            d="M0,35 Q15,20 30,28 T60,15 T90,8 T100,2 L100,40 L0,40 Z"
+                            fill="url(#trend-gradient)"
+                            opacity="0.15"
                           />
                           <defs>
-                            <linearGradient id="neon-orange" x1="0" y1="0" x2="1" y2="0">
-                              <stop offset="0%" stopColor="#FF5500" />
-                              <stop offset="100%" stopColor="#FFCC00" />
-                            </linearGradient>
-                            <linearGradient id="orange-gradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#FF5500" />
-                              <stop offset="100%" stopColor="transparent" strokeWidth="0" />
+                            <linearGradient id="trend-gradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#F7F7F7" />
+                              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
                             </linearGradient>
                           </defs>
                         </svg>
                         
                         {/* X-axis indicators */}
-                        <div className="flex justify-between text-[10px] text-stone-500 font-mono mt-2 select-none">
-                          <span>01 Juni</span>
-                          <span>07 Juni</span>
-                          <span>14 Juni</span>
-                          <span>21 Juni</span>
-                          <span>28 Juni</span>
+                        <div className="flex justify-between text-[10px] text-[#BDBDBD] font-mono mt-4 select-none uppercase">
+                          <span>Minggu 1</span>
+                          <span>Minggu 2</span>
+                          <span>Minggu 3</span>
+                          <span>Minggu 4</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Operational Overview summary metrics */}
-                    <div className="bg-[#0d110e]/70 border border-[#1a231c]/60 p-6 rounded-2xl flex flex-col justify-between space-y-4 shadow-sm">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl flex flex-col justify-between h-full">
                       <div>
-                        <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5 mb-4 font-mono">
-                          <Building size={14} className="text-stone-400" /> Ringkasan Bisnis
+                        <h3 className="text-sm font-bold text-[#F7F7F7] uppercase tracking-widest flex items-center gap-2 mb-8 font-mono">
+                          <Activity size={16} className="text-[#BDBDBD]" /> Business Summary
                         </h3>
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center border-b border-neutral-800 pb-2.5">
-                            <span className="text-xs text-stone-400">Total Pelanggan Terdaftar</span>
-                            <span className="text-sm font-bold text-neutral-100">{users.length} Orang</span>
+                        <div className="space-y-6">
+                          <div>
+                            <span className="text-[11px] text-[#BDBDBD] uppercase tracking-widest block font-bold mb-1">Total Users</span>
+                            <span className="text-2xl font-bold text-[#F7F7F7]">{users.length}</span>
                           </div>
-                          <div className="flex justify-between items-center border-b border-neutral-800 pb-2.5">
-                            <span className="text-xs text-stone-400">Total Booking Terarsip</span>
-                            <span className="text-sm font-bold text-neutral-100">{bookings.length} Reservasi</span>
+                          <div className="border-t border-[#1D1D1D] pt-6">
+                            <span className="text-[11px] text-[#BDBDBD] uppercase tracking-widest block font-bold mb-1">Total Bookings</span>
+                            <span className="text-2xl font-bold text-[#F7F7F7]">{bookings.length}</span>
                           </div>
-                          <div className="flex justify-between items-center border-b border-neutral-800 pb-2.5">
-                            <span className="text-xs text-stone-400">Total Omset Pendapatan</span>
-                            <span className="text-sm font-extrabold text-[#FF5500]">Rp {totalRevenue.toLocaleString("id-ID")}</span>
+                          <div className="border-t border-[#1D1D1D] pt-6">
+                            <span className="text-[11px] text-[#BDBDBD] uppercase tracking-widest block font-bold mb-1">Total Revenue</span>
+                            <span className="text-2xl font-bold text-[#F7F7F7]">Rp {totalRevenue.toLocaleString("id-ID")}</span>
                           </div>
                         </div>
                       </div>
 
                       <button 
                         onClick={() => setActiveTab('reports')}
-                        className="w-full py-2 bg-neutral-900 border border-neutral-800 hover:border-[#FF5500]/40 text-stone-200 rounded-xl text-xs font-bold transition-colors shadow-inner cursor-pointer"
+                        className="w-full mt-8 py-3 bg-[#1D1D1D] hover:bg-[#2A2A2A] text-[#F7F7F7] rounded-xl text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer"
                       >
-                        Buka Laporan Lengkap
+                        View Full Reports
                       </button>
-                    </div>
-                  </div>
-
-                  {/* Operational workflow tutorial/guide strip */}
-                  <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4 shadow-inner">
-                    <h4 className="font-bold text-[#FF5500] text-xs font-mono tracking-widest uppercase flex items-center gap-2 select-none">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#FF5500] animate-pulse"></span>
-                      Operasional Alur Validasi Sewa Pelanggan
-                    </h4>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-                      {/* Step 1 */}
-                      <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-1 hover:border-[#FF5500]/30 transition-all">
-                        <span className="font-mono text-[9px] font-extrabold text-[#FF5500] block tracking-wider uppercase opacity-85">01 &bull; KTP REG</span>
-                        <p className="text-xs text-stone-100 font-bold">Verifikasi Identitas</p>
-                        <p className="text-[11px] text-stone-400 leading-relaxed font-normal">
-                          Verifikasi dokumen jaminan KTP pengguna baru di menu <b className="text-[#FF5500] hover:underline cursor-pointer" onClick={() => setActiveTab('customer')}>Customer</b> untuk sah melakukan order.
-                        </p>
-                      </div>
-
-                      {/* Step 2 */}
-                      <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-1 hover:border-[#FF5500]/30 transition-all">
-                        <span className="font-mono text-[9px] font-extrabold text-[#FF5500] block tracking-wider uppercase opacity-85">02 &bull; ORDERING</span>
-                        <p className="text-xs text-stone-100 font-bold">Waiting Payment</p>
-                        <p className="text-[11px] text-stone-400 leading-relaxed font-normal">
-                          Pelanggan memesan alat gunung. Pembukuan mencatat status <b className="text-neutral-300">Waiting Payment</b> menanti setoran dana deposit & biaya.
-                        </p>
-                      </div>
-
-                      {/* Step 3 */}
-                      <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-1 hover:border-[#FF5500]/30 transition-all">
-                        <span className="font-mono text-[9px] font-extrabold text-[#FF5500] block tracking-wider uppercase opacity-85">03 &bull; VERIF PAY</span>
-                        <p className="text-xs text-stone-100 font-bold">Pemeriksaan Slip</p>
-                        <p className="text-[11px] text-stone-400 leading-relaxed font-normal">
-                          Periksa bukti transfer m-banking di menu <b className="text-[#FF5500] hover:underline cursor-pointer" onClick={() => setActiveTab('payment_verification')}>Payment Verif</b> untuk melepaskan status bayar reservasi.
-                        </p>
-                      </div>
-
-                      {/* Step 4 */}
-                      <div className="bg-neutral-900 p-4 rounded-xl border border-neutral-800 space-y-1 hover:border-[#FF5500]/30 transition-all">
-                        <span className="font-mono text-[9px] font-extrabold text-[#FF5500] block tracking-wider uppercase opacity-85">04 &bull; PENYERAHAN</span>
-                        <p className="text-xs text-stone-100 font-bold">Keluar Gerai</p>
-                        <p className="text-[11px] text-stone-400 leading-relaxed font-normal">
-                          Serah terima unit alat gunung di toko fisik Sembalun. Pindahkan status transaksi sewa ke <b className="text-[#FF5500]">Ongoing (Sedang Disewa)</b>.
-                        </p>
-                      </div>
-
-                      {/* Step 5 */}
-                      <div className="bg-neutral-900 p-4 rounded-xl border border-neutral-800 space-y-1 hover:border-[#FF5500]/30 transition-all">
-                        <span className="font-mono text-[9px] font-extrabold text-[#FF5500] block tracking-wider uppercase opacity-85">05 &bull; ASSET CHECKS</span>
-                        <p className="text-xs text-stone-100 font-bold">Cek Fisik & Denda</p>
-                        <p className="text-[11px] text-stone-400 leading-relaxed font-normal">
-                          Uji kelayakan pasca kembali. Terapkan denda (terlambat/robek) atau submit <b className="text-[#FF5500]">Maintenance</b> jika perlengkapan butuh perbaikan.
-                        </p>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -963,92 +937,94 @@ export default function AdminDashboard() {
               {/* ------------------ MENU 2: INVENTORY CATALOG CONTENT ------------------ */}
               {activeTab === 'inventory' && (
                 <div className="space-y-8">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-neutral-950 border border-neutral-800 rounded-2xl p-6 shadow-sm">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-[#151515] border border-[#1D1D1D] rounded-3xl p-8">
                     <div>
-                      <h3 className="text-md font-bold text-white uppercase tracking-wider font-mono">Katalog Inventaris & Status Kelayakan Unit</h3>
-                      <p className="text-xs text-stone-550 mt-1 font-sans">Tambahkan katalog, periksa fisik tenda, tas, peralatan masak, dsb.</p>
+                      <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Inventory Catalog</h3>
+                      <p className="text-sm text-[#BDBDBD] mt-1">Manage physical gear and track asset condition.</p>
                     </div>
                     <button 
                       onClick={() => setShowAddInv(true)} 
-                      className="px-4 py-2 bg-[#FF5500] hover:bg-[#FF3300] text-white font-bold text-xs rounded-xl transition-all shadow-sm cursor-pointer select-none border border-[#FF5500]/20 shadow-[#FF5500]/5"
+                      className="px-6 py-3 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] font-bold text-sm rounded-xl transition-colors cursor-pointer select-none shadow-sm flex items-center gap-2"
                     >
-                      + Tambah Produk Baru
+                      <PlusCircle size={16} />
+                      Add Product
                     </button>
                   </div>
 
                   {inventoryItems.length === 0 ? (
-                    <div className="bg-[#0d110e]/40 border border-[#1a231c]/60 p-12 text-center rounded-2xl text-stone-500 text-sm">
-                      Katalog inventaris kosong.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      Empty inventory catalog.
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {inventoryItems.map((item) => (
-                        <div key={item.id} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 md:p-8 space-y-5 shadow-inner">
-                          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-neutral-800 pb-4">
+                        <div key={item.id} className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-6 flex flex-col">
+                          <div className="flex justify-between items-start mb-6">
                             <div>
-                              <h4 className="font-bold text-white text-lg leading-tight">{item.name}</h4>
-                              <p className="text-xs text-stone-400 mt-1 font-medium font-sans">
-                                Kategori: <span className="text-[#FF5500] font-semibold">{item.category?.name || "Peralatan"}</span> &bull; 
-                                Harga Sewa: <span className="text-neutral-200 font-bold ml-1">Rp {item.pricePerDay?.toLocaleString("id-ID")} / hari</span>
+                              <h4 className="font-bold text-[#F7F7F7] text-lg leading-tight">{item.name}</h4>
+                              <p className="text-xs text-[#BDBDBD] mt-1">
+                                Category: {item.category?.name || "Gear"} &bull; Rp {item.pricePerDay?.toLocaleString("id-ID")} / day
                               </p>
                             </div>
-                            <span className="text-[11px] text-neutral-500 font-mono">ID: {item.id}</span>
+                            <span className="text-[10px] bg-[#1D1D1D] text-[#BDBDBD] px-2 py-1 rounded font-mono uppercase">ID: {item.id.substring(0,6)}</span>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div className="space-y-3 flex-1 overflow-y-auto pr-2 max-h-72">
                             {item.units?.map((unit: any) => (
                               <div 
                                 key={unit.id} 
-                                className="bg-neutral-950/80 p-4 rounded-xl border border-neutral-800 flex flex-col justify-between gap-4 shadow-sm"
+                                className="bg-[#0B0B0B] p-4 rounded-2xl border border-[#1D1D1D] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                               >
                                 <div>
-                                  <div className="flex items-center justify-between gap-1.5">
-                                    <span className="font-mono text-xs font-bold text-neutral-200 uppercase bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
+                                  <div className="flex items-center gap-3">
+                                    <span className="font-mono text-xs font-bold text-[#F7F7F7]">
                                       {unit.unitCode}
                                     </span>
-                                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-extrabold border ${
+                                    <span className={`inline-flex px-2 py-0.5 rounded-md text-[9px] uppercase tracking-widest font-bold ${
                                       unit.status === "available"
-                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                        ? "bg-emerald-500/10 text-emerald-400"
                                         : unit.status === "maintenance"
-                                        ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-                                        : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                        ? "bg-blue-500/10 text-blue-400"
+                                        : unit.status === "rented"
+                                        ? "bg-purple-500/10 text-purple-400"
+                                        : "bg-red-500/10 text-red-500"
                                     }`}>
                                       {unit.status}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-neutral-400 mt-2.5">
-                                    Fisik: <b className="text-neutral-200 font-bold">{unit.condition || "Prima (Siap Sewa)"}</b>
+                                  <p className="text-[11px] text-[#BDBDBD] mt-1 truncate max-w-[200px]">
+                                    Condition: {unit.condition || "Optimal"}
                                   </p>
                                 </div>
 
-                                <div className="space-y-2 border-t border-neutral-850 pt-3">
-                                  <span className="text-[10px] font-extrabold text-neutral-500 uppercase block tracking-wider leading-none">Ubah Cepat Kelayakan:</span>
-                                  <div className="flex flex-wrap gap-1">
-                                    {unit.status !== "available" && (
-                                      <button
-                                        onClick={() => handleUpdateUnitStatus(unit.id, "available", "Prima - Siap Pakai")}
-                                        className="px-2 py-1 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 text-[10px] font-bold rounded cursor-pointer border border-emerald-500/20 transition-all font-mono"
-                                      >
-                                        READY (Prima)
-                                      </button>
-                                    )}
-                                    {unit.status !== "maintenance" && (
-                                      <button
-                                        onClick={() => setMaintenanceUnit(unit)}
-                                        className="px-2 py-1 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 text-[10px] font-bold rounded cursor-pointer border border-blue-500/20 transition-all font-mono"
-                                      >
-                                        + MAINT
-                                      </button>
-                                    )}
-                                    {unit.status !== "damaged" && (
-                                      <button
-                                        onClick={() => handleUpdateUnitStatus(unit.id, "damaged", "Aus / Rusak Ringan")}
-                                        className="px-2 py-1 bg-red-600/10 hover:bg-red-600/20 text-red-400 text-[10px] font-bold rounded cursor-pointer border border-red-500/20 transition-all font-mono"
-                                      >
-                                        DAMAGED
-                                      </button>
-                                    )}
-                                  </div>
+                                <div className="flex gap-2">
+                                  {unit.status !== "available" && (
+                                    <button
+                                      title="Mark Ready"
+                                      onClick={() => handleUpdateUnitStatus(unit.id, "available", "Optimal")}
+                                      className="p-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg cursor-pointer transition-colors"
+                                    >
+                                      <CheckCircle2 size={14} />
+                                    </button>
+                                  )}
+                                  {unit.status !== "maintenance" && (
+                                    <button
+                                      title="Send to Maintenance"
+                                      onClick={() => setMaintenanceUnit(unit)}
+                                      className="p-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg cursor-pointer transition-colors"
+                                    >
+                                      <Wrench size={14} />
+                                    </button>
+                                  )}
+                                  {unit.status !== "damaged" && (
+                                    <button
+                                      title="Mark Damaged"
+                                      onClick={() => handleUpdateUnitStatus(unit.id, "damaged", "Reported Damage")}
+                                      className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg cursor-pointer transition-colors"
+                                    >
+                                      <AlertCircle size={14} />
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -1062,74 +1038,80 @@ export default function AdminDashboard() {
 
               {/* ------------------ MENU 3: BOOKINGS LIST CONTENT ------------------ */}
               {activeTab === 'booking' && (
-                <div className="space-y-6">
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Active Bookings & Logistics</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">Manage ongoing rentals, inspect returned gear, and apply penalties if necessary.</p>
+                  </div>
+
                   {bookings.length === 0 ? (
-                    <div className="bg-neutral-950/40 border border-neutral-800 p-12 text-center rounded-2xl text-neutral-500 text-sm">
-                      Belum ada transaksi rental yang terdaftar.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      No active bookings in the system right now.
                     </div>
                   ) : (
-                    bookings.map((b) => (
+                    <div className="space-y-6">
+                    {bookings.map((b) => (
                       <div 
                         key={b.id} 
-                        className="bg-neutral-900 rounded-2xl border border-neutral-800 p-6 md:p-8 flex flex-col lg:flex-row gap-6 justify-between items-start shadow-inner"
+                        className="bg-[#151515] rounded-3xl border border-[#1D1D1D] p-8 flex flex-col lg:flex-row gap-8 justify-between items-start shadow-sm"
                       >
-                        <div className="space-y-4 flex-1">
+                        <div className="space-y-6 flex-1 w-full">
                           
                           {/* Heading Number status */}
-                          <div className="flex flex-wrap items-center gap-3">
-                            <span className="font-mono font-extrabold text-[#FF5500] tracking-tight text-xs bg-neutral-950 px-2.5 py-1 rounded border border-neutral-800">
+                          <div className="flex flex-wrap items-center gap-4 border-b border-[#1D1D1D] pb-6">
+                            <span className="font-mono font-bold text-[#F7F7F7] bg-[#0B0B0B] border border-[#1D1D1D] px-4 py-1.5 rounded-lg text-sm">
                               {b.bookingNumber}
                             </span>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-extrabold border ${
+                            <span className={`inline-flex items-center px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-widest font-bold border ${
                               b.status === "completed" 
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
                                 : b.status === "cancelled" 
-                                ? "bg-stone-500/10 text-stone-400 border-neutral-500/20" 
+                                ? "bg-stone-500/10 text-[#BDBDBD] border-neutral-500/20" 
                                 : b.status === "penalty" || (b.penalties && b.penalties.some((p: any) => p.status === "unpaid"))
-                                ? "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse"
-                                : "bg-[#FF5500]/10 text-[#FF5500] border-[#FF5500]/20"
+                                ? "bg-red-500/10 text-red-500 border-red-500/20 animate-pulse"
+                                : "bg-[#F7F7F7] text-[#0B0B0B] border-[#F7F7F7]"
                             }`}>
                               {b.status.replace(/_/g, ' ')}
                             </span>
-                            <span className="text-[10px] text-stone-550 font-mono">
-                              Masuk: {new Date(b.created_at || b.created).toLocaleDateString("id-ID")}
+                            <span className="text-xs text-[#BDBDBD] font-mono ml-auto">
+                              {new Date(b.created_at || b.created).toLocaleDateString("id-ID")}
                             </span>
                           </div>
 
                           {/* Customer Bio */}
-                          <div className="space-y-1">
-                            <p className="font-bold text-white text-base">
-                              {b.customer_name || b.custName} <span className="text-stone-500 font-normal text-xs font-mono">({b.customer_email || b.custId})</span>
+                          <div className="space-y-2">
+                            <p className="font-bold text-[#F7F7F7] text-lg">
+                              {b.customer_name || b.custName} <span className="text-[#BDBDBD] font-normal text-sm font-mono ml-2">({b.customer_email || b.custId})</span>
                             </p>
-                            <div className="text-xs text-stone-400 flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
-                              <span>Mulai: <b className="text-[#faf9f6]/95">{new Date(b.start_date || b.start).toLocaleDateString("id-ID")}</b></span>
-                              <span>Kembali: <b className="text-[#faf9f6]/95">{new Date(b.end_date || b.end).toLocaleDateString("id-ID")}</b></span>
-                              <span>Tarif Sewa: <b className="text-[#FF5500] font-extrabold">Rp {b.total_price?.toLocaleString("id-ID") || b.total?.toLocaleString("id-ID")}</b></span>
+                            <div className="text-xs text-[#BDBDBD] flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
+                              <span>Start: <b className="text-[#F7F7F7] font-semibold">{new Date(b.start_date || b.start).toLocaleDateString("id-ID")}</b></span>
+                              <span>End: <b className="text-[#F7F7F7] font-semibold">{new Date(b.end_date || b.end).toLocaleDateString("id-ID")}</b></span>
+                              <span className="bg-[#0B0B0B] border border-[#1D1D1D] px-3 py-1 rounded-md">Total: <b className="text-[#F7F7F7] font-bold">Rp {b.total_price?.toLocaleString("id-ID") || b.total?.toLocaleString("id-ID")}</b></span>
                             </div>
                             {b.note && (
-                              <p className="text-[11px] text-stone-500 italic bg-neutral-950 border border-neutral-800 p-2 rounded-lg max-w-xl">
-                                Catatan: {b.note}
-                              </p>
+                              <div className="mt-4 bg-[#0B0B0B] border border-[#1D1D1D] p-4 rounded-xl">
+                                <p className="text-xs text-[#BDBDBD] italic">
+                                  Notes: {b.note}
+                                </p>
+                              </div>
                             )}
                           </div>
 
                           {/* Items rented list representation */}
-                          <div className="pt-3 border-t border-[#1a231c]/40">
-                            <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider mb-2">Peralatan Disewa:</p>
-                            <div className="flex flex-wrap gap-2">
+                          <div className="pt-6 border-t border-[#1D1D1D]">
+                            <p className="text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-4">Rented Equipment:</p>
+                            <div className="flex flex-wrap gap-3">
                               {typeof b.items === 'string' ? (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-stone-200 font-sans">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#0B0B0B] border border-[#1D1D1D] rounded-xl text-xs text-[#F7F7F7] font-medium shadow-sm">
                                   {b.items}
                                 </span>
                               ) : (
                                 b.items?.map((bi: any) => (
                                   <span 
                                     key={bi.id} 
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-950 border border-neutral-800 rounded-lg text-xs text-stone-200 font-sans"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#0B0B0B] border border-[#1D1D1D] rounded-xl text-xs text-[#F7F7F7] font-medium shadow-sm"
                                   >
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
-                                    {bi.itemName} {bi.unitCode && <code className="text-stone-550 font-semibold text-[10px] font-mono">({bi.unitCode})</code>}
+                                    {bi.itemName} {bi.unitCode && <code className="text-[#BDBDBD] font-bold text-[10px] font-mono ml-1 bg-[#151515] px-1.5 py-0.5 rounded">[{bi.unitCode}]</code>}
                                   </span>
                                 ))
                               )}
@@ -1138,24 +1120,24 @@ export default function AdminDashboard() {
 
                           {/* Denda lists block */}
                           {b.penalties && b.penalties.length > 0 && (
-                            <div className="pt-3 border-t border-[#1a231c]/40 bg-red-950/10 p-3 rounded-xl border border-red-900/20">
-                              <p className="text-xs font-extrabold text-red-400 uppercase tracking-widest mb-2 flex items-center gap-1 text-[10px]">
-                                <BadgeAlert size={12} /> TABEL PENALTI DENDA:
+                            <div className="mt-6 bg-red-500/5 p-4 rounded-2xl border border-red-500/10">
+                              <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <BadgeAlert size={14} /> ACTIVE PENALTIES
                               </p>
-                              <div className="space-y-2">
+                              <div className="space-y-3">
                                 {b.penalties.map((p: any) => (
-                                  <div key={p.id} className="flex justify-between items-center text-xs">
-                                    <span className="text-stone-400">
-                                      &bull; {p.reason} <b className="text-[#faf9f6]/90">(Rp {p.amount.toLocaleString("id-ID")})</b>
+                                  <div key={p.id} className="flex justify-between items-center text-xs bg-[#0B0B0B] px-4 py-2 rounded-xl border border-[#1D1D1D]">
+                                    <span className="text-[#BDBDBD]">
+                                      {p.reason} <b className="text-[#F7F7F7] ml-2 font-mono">Rp {p.amount.toLocaleString("id-ID")}</b>
                                     </span>
                                     {p.status === "paid" ? (
-                                      <span className="text-emerald-400 font-bold font-mono text-[11px] bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/20">&#10003; DISAHKAN LUNAS</span>
+                                      <span className="text-emerald-400 font-bold font-mono text-[10px] bg-emerald-500/10 px-3 py-1 rounded-md border border-emerald-500/20">PAID</span>
                                     ) : (
                                       <button
                                         onClick={() => handlePayPenalty(b.id, p.id)}
-                                        className="px-2 py-0.5 bg-red-650 text-red-200 border border-red-500 hover:bg-red-600 rounded text-[10px] font-bold cursor-pointer transition-all"
+                                        className="px-3 py-1.5 bg-[#F7F7F7] text-[#0B0B0B] hover:bg-[#E0E0E0] rounded-md text-[10px] font-bold cursor-pointer transition-colors"
                                       >
-                                        Verifikasi Atas Lunas Denda
+                                        Verify Payment
                                       </button>
                                     )}
                                   </div>
@@ -1166,187 +1148,204 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Custom Control actions flow */}
-                        <div className="flex flex-col sm:flex-row lg:flex-col gap-2 w-full lg:w-48 border-t lg:border-t-0 border-[#1a231c] pt-4 lg:pt-0 shrink-0">
+                        <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-56 border-t lg:border-t-0 border-[#1D1D1D] pt-6 lg:pt-0 lg:pl-6 shrink-0 lg:border-l">
                           {b.status === 'payment_verified' && (
                             <button 
                               onClick={() => updateBookingStatus(b.id, 'ready_pickup')} 
-                              className="px-4 py-2.5 bg-[#FF5500] hover:bg-[#FF3300] text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer text-center border border-[#FF5500]/20 shadow-[#FF5500]/10"
+                              className="w-full px-5 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] rounded-xl text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-2 shrink-0"
                             >
-                              Sahkan Bayar & Siapkan Unit
+                              <CheckCircle2 size={16} /> Prepare Gear
                             </button>
                           )}
                           {b.status === 'ready_pickup' && (
                             <button 
                               onClick={() => updateBookingStatus(b.id, 'ongoing')} 
-                              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer text-center"
+                              className="w-full px-5 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] rounded-xl text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-2 shrink-0"
                             >
-                              Serahkan Barang (Ongoing)
+                              Handover to User
                             </button>
                           )}
                           {b.status === 'ongoing' && (
-                            <div className="flex flex-col gap-1.5 w-full">
+                            <div className="flex flex-col gap-3 w-full">
                               <button 
                                 onClick={() => updateBookingStatus(b.id, 'returned')} 
-                                className="px-4 py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer text-center"
+                                className="w-full px-5 py-3.5 bg-[#0B0B0B] hover:bg-[#1D1D1D] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl text-xs font-bold transition-colors cursor-pointer text-center"
                               >
-                                Selesai Kembalian (Cek Fisik)
+                                Mark as Returned
                               </button>
                               <button 
                                 onClick={() => setPenaltyBooking(b)} 
-                                className="px-4 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-xl text-xs font-semibold py-2 transition-all text-center cursor-pointer"
+                                className="w-full px-5 py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-2"
                               >
-                                + Kenakan Denda Fisik
+                                <AlertCircle size={14} /> Log Penalty
                               </button>
                             </div>
                           )}
                           {b.status === 'returned' && (
-                            <div className="flex flex-col gap-1.5 w-full">
+                            <div className="flex flex-col gap-3 w-full">
                               <button 
                                 onClick={() => updateBookingStatus(b.id, 'completed')} 
-                                className="px-4 py-2.5 bg-white text-black hover:bg-neutral-200 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer text-center"
+                                className="w-full px-5 py-3.5 bg-[#F7F7F7] text-[#0B0B0B] hover:bg-[#E0E0E0] rounded-xl text-xs font-bold transition-colors cursor-pointer text-center"
                               >
-                                Selesaikan Transaksi (Closed)
+                                Close Transaction
                               </button>
                               <button 
                                 onClick={() => setPenaltyBooking(b)} 
-                                className="px-3 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-xl text-xs font-semibold py-2 transition-all text-center cursor-pointer"
+                                className="w-full px-5 py-3.5 border border-red-500/20 text-red-500 hover:bg-red-500/10 rounded-xl text-xs font-bold transition-colors cursor-pointer text-center"
                               >
-                                + Kenakan Denda Lambat / Rusak
+                                Log Penalty
                               </button>
                             </div>
                           )}
                           
                           {/* Helpful Info label text */}
                           {b.status === 'completed' && (
-                            <span className="text-xs text-neutral-500 font-semibold italic flex items-center justify-center gap-1 select-none py-1 border border-neutral-800 rounded-lg bg-neutral-900/30">
-                              <CheckCircle2 size={12} className="text-emerald-500" /> Transaksi Selesai
-                            </span>
+                            <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-3 rounded-xl flex items-center justify-center gap-2">
+                              <CheckCircle2 size={16} className="text-emerald-500" />
+                              <span className="text-xs text-[#BDBDBD] font-bold">Transaction Closed</span>
+                            </div>
                           )}
                           {b.status === 'cancelled' && (
-                            <span className="text-xs text-neutral-500 font-semibold italic flex items-center justify-center gap-1 select-none py-1 border border-neutral-800 rounded-lg bg-neutral-900/30">
-                              <XCircle size={12} /> Pesanan Dibatalkan
-                            </span>
+                            <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-3 rounded-xl flex items-center justify-center gap-2">
+                              <XCircle size={16} className="text-[#BDBDBD]" />
+                              <span className="text-xs text-[#BDBDBD] font-bold">Order Cancelled</span>
+                            </div>
                           )}
                           {b.status === 'waiting_payment' && (
-                            <div className="flex flex-col gap-1.5 w-full">
-                              <span className="text-xs text-amber-500 font-semibold italic text-center pb-1 select-none">
-                                &bull; Menunggu Bukti Transfer...
-                              </span>
+                            <div className="flex flex-col gap-3 w-full">
+                              <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-3 rounded-xl flex justify-center">
+                                <span className="text-[10px] text-[#BDBDBD] font-bold uppercase tracking-widest text-center">
+                                  Awaiting Transfer
+                                </span>
+                              </div>
                               <button 
                                 onClick={() => updateBookingStatus(b.id, 'payment_verified')}
-                                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[11px] font-bold cursor-pointer text-center transition-all"
+                                className="w-full px-3 py-2 bg-[#0B0B0B] hover:bg-[#1D1D1D] text-[#F7F7F7] border border-[#1D1D1D] rounded-lg text-xs font-bold cursor-pointer text-center transition-colors"
                               >
-                                Sahkan Manual (Bypass)
+                                Force Bypass Verify
                               </button>
                             </div>
                           )}
                         </div>
                       </div>
-                    ))
+                    ))}
+                    </div>
                   )}
                 </div>
               )}
 
               {/* ------------------ MENU 4: CUSTOMERS PROFILE CONTENT ------------------ */}
               {activeTab === 'customer' && (
-                <div className="space-y-6">
-                  <div className="bg-neutral-950 border border-neutral-800 p-6 rounded-2xl">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">Verifikasi Identitas Resmi KTP / Syarat KTM</h3>
-                    <p className="text-xs text-neutral-500 leading-normal">
-                      Setiap penyewaan wajib dijamin dengan validasi KTP asli. Periksa secara rinci kesesuaian nama pendaftar dengan fisik foto identitas demi mengamankan logistik Outrent.
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Identity Verification Center</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">
+                      Review government-issued IDs (KTP) submitted by users to approve accounts for rentals.
                     </p>
                   </div>
 
                   {users.length === 0 ? (
-                    <div className="bg-neutral-950/40 border border-neutral-800 p-12 text-center rounded-2xl text-neutral-500 text-sm">
-                      Kustomer belum tersedia.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      No user accounts found.
                     </div>
                   ) : (
-                    users.map((u) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {users.map((u) => (
                       <div 
                         key={u.id} 
-                        className="bg-[#0d110e]/40 rounded-2xl border border-[#1a231c]/60 p-6 md:p-8 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center shadow-inner"
+                        className="bg-[#151515] rounded-3xl border border-[#1D1D1D] p-6 flex flex-col justify-between shadow-sm"
                       >
-                        <div className="space-y-1">
-                          <h4 className="font-bold text-white text-lg leading-tight">{u.name}</h4>
-                          <p className="text-stone-400 font-medium text-xs font-mono">{u.email}</p>
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-bold text-[#F7F7F7] text-lg">{u.name}</h4>
+                              <p className="text-[#BDBDBD] text-xs font-mono mt-0.5">{u.email}</p>
+                            </div>
+                            {u.isVerified ? (
+                              <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-md text-[10px] font-bold uppercase tracking-widest">
+                                <CheckCircle2 size={12} /> VERIFIED
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 px-3 py-1 bg-[#0B0B0B] border border-[#1D1D1D] text-[#BDBDBD] rounded-md text-[10px] font-bold uppercase tracking-widest">
+                                PENDING
+                              </span>
+                            )}
+                          </div>
                           
-                          {u.identityUrl ? (
-                            <button 
-                              type="button"
-                              onClick={() => setSelectedKtpImg(u.identityUrl)}
-                              className="mt-2 text-xs text-[#FF5500] font-bold hover:underline hover:text-stone-100 cursor-pointer inline-flex items-center gap-1.5 focus:outline-none bg-[#FF5500]/5 px-3 py-1.5 rounded-lg border border-[#FF5500]/10"
-                            >
-                              <Eye size={12} /> Tinjau Foto KTP Pelanggan
-                            </button>
-                          ) : (
-                            <p className="mt-2 text-xs text-stone-600 font-semibold uppercase tracking-wider">Identitas jaminan KTP belum diunggah</p>
-                          )}
+                          <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-4 rounded-xl flex items-center justify-between">
+                            <span className="text-xs text-[#BDBDBD] font-medium">ID Document</span>
+                            {u.identityUrl ? (
+                              <button 
+                                type="button"
+                                onClick={() => setSelectedKtpImg(u.identityUrl)}
+                                className="text-xs text-[#F7F7F7] font-bold hover:text-white flex items-center gap-2 bg-[#1D1D1D] px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                              >
+                                <Eye size={14} /> View File
+                              </button>
+                            ) : (
+                              <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest">NOT UPLOADED</span>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="flex items-center">
-                          {u.isVerified ? (
-                            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 select-none">
-                              <CheckCircle2 size={12} /> Terverifikasi ✓
-                            </span>
-                          ) : u.identityUrl ? (
-                            <div className="flex items-center gap-2">
-                              <button 
-                                onClick={() => handleVerifyUser(u.id, true)} 
-                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-                              >
-                                Sah & Akses (Approve)
-                              </button>
-                              <button 
-                                onClick={() => handleVerifyUser(u.id, false)} 
-                                className="px-4 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-xl text-xs font-semibold py-2 transition-all cursor-pointer"
-                              >
-                                Tolak Berkas
-                              </button>
-                            </div>
-                          ) : (
-                            <span className="text-xs border border-neutral-800 px-4 py-2 rounded-xl text-stone-500 font-bold bg-neutral-950 select-none">
-                              Menunggu Unggahan Akun
-                            </span>
-                          )}
-                        </div>
+                        {!u.isVerified && u.identityUrl && (
+                          <div className="pt-6 mt-6 border-t border-[#1D1D1D] grid grid-cols-2 gap-3">
+                            <button 
+                              onClick={() => handleVerifyUser(u.id, true)} 
+                              className="py-3 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center"
+                            >
+                              Approve
+                            </button>
+                            <button 
+                              onClick={() => handleVerifyUser(u.id, false)} 
+                              className="py-3 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center justify-center"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    ))
+                    ))}
+                    </div>
                   )}
                 </div>
               )}
 
               {/* ------------------ MENU 5: DEDICATED PAYMENT VERIFICATION ------------------ */}
               {activeTab === 'payment_verification' && (
-                <div className="space-y-6">
-                  <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2 font-mono">Panel Khusus Validasi Bayar & Bukti Transfer</h3>
-                    <p className="text-xs text-stone-400 leading-normal font-sans">
-                      Mengisolasi pencarian khusus untuk transaksi berjalan dengan status Menunggu Pembayaran atau Ungguhan bukti transaksi. Periksa slip transfer bank penyewa sebelum menyetujui logistik pickup.
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Payment Validations Box</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">
+                      Review incoming bank transfer slips and approve rentals prior to handover.
                     </p>
                   </div>
 
                   {bookings.filter(b => b.status === "payment_verified" || b.status === "waiting_payment").length === 0 ? (
-                    <div className="bg-neutral-900/40 border border-neutral-800 p-12 text-center rounded-2xl text-stone-550 text-sm">
-                      Semua transaksi telah divalidasi. Tidak ada bukti transfer pending masuk.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      Clear. All unverified payments have been processed.
                     </div>
                   ) : (
-                    bookings.filter(b => b.status === "payment_verified" || b.status === "waiting_payment").map((b) => (
+                    <div className="space-y-6">
+                    {bookings.filter(b => b.status === "payment_verified" || b.status === "waiting_payment").map((b) => (
                       <div 
                         key={b.id} 
-                        className="bg-neutral-900 rounded-2xl border border-neutral-800 p-6 md:p-8 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center shadow-inner"
+                        className="bg-[#151515] rounded-3xl border border-[#1D1D1D] p-8 flex flex-col md:flex-row gap-6 justify-between items-start shadow-sm"
                       >
-                        <div className="space-y-3 flex-1">
-                          <div className="flex items-center gap-3">
-                            <span className="font-mono text-xs font-bold text-[#FF5500] bg-neutral-950 px-2.5 py-0.5 rounded border border-neutral-800">
+                        <div className="space-y-6 flex-1 w-full">
+                          <div className="flex flex-wrap items-center gap-4">
+                            <span className="font-mono text-sm font-bold text-[#F7F7F7] bg-[#0B0B0B] border border-[#1D1D1D] px-4 py-2 rounded-lg">
                               {b.bookingNumber}
                             </span>
-                            <span className="text-xs text-stone-450 font-medium">Total Tarif: <b className="text-[#FF5500] font-extrabold text-sm">Rp {b.total_price?.toLocaleString("id-ID") || b.total?.toLocaleString("id-ID")}</b></span>
+                            <span className="px-4 py-2 bg-[#0B0B0B] border border-[#1D1D1D] rounded-lg text-xs text-[#BDBDBD]">Total: <b className="text-[#F7F7F7] font-extrabold ml-1 font-mono text-sm">Rp {b.total_price?.toLocaleString("id-ID") || b.total?.toLocaleString("id-ID")}</b></span>
+                            {b.status === "waiting_payment" && (
+                              <span className="px-3 py-1.5 bg-yellow-500/10 text-yellow-500 rounded-md text-[10px] font-bold uppercase tracking-widest ml-auto self-start">Pending Proof</span>
+                            )}
                           </div>
 
-                          <div>
-                            <p className="text-sm font-bold text-[#faf9f6]/95">Penyewa: {b.customer_name || b.custName}</p>
-                            <p className="text-xs text-stone-500 font-mono mt-0.5">Item: {typeof b.items === 'string' ? b.items : b.items?.map((bi: any) => bi.itemName).join(", ")}</p>
+                          <div className="bg-[#0B0B0B] border border-[#1D1D1D] p-6 rounded-2xl">
+                            <p className="text-base font-bold text-[#F7F7F7]">{b.customer_name || b.custName}</p>
+                            <p className="text-xs text-[#BDBDBD] mt-2 leading-relaxed">Requested Gear: {typeof b.items === 'string' ? b.items : b.items?.map((bi: any) => bi.itemName).join(", ")}</p>
                           </div>
 
                           {/* Render proof of payment check */}
@@ -1354,31 +1353,32 @@ export default function AdminDashboard() {
                             <div key={p.id} className="pt-2">
                               <button 
                                 onClick={() => setSelectedProofImg(p.proofUrl)}
-                                className="text-xs text-[#FF5500] hover:underline hover:text-stone-100 font-bold flex items-center gap-1.5 bg-[#FF5500]/5 border border-[#FF5500]/10 px-3 py-1.5 rounded-lg"
+                                className="inline-flex items-center gap-2 px-5 py-3 bg-[#1D1D1D] hover:bg-[#2A2A2A] text-[#F7F7F7] rounded-xl text-xs font-bold transition-colors cursor-pointer"
                               >
-                                <Eye size={12} /> Buka Bukti Slip Transfer Bank
+                                <Eye size={16} /> View Transfer Slip
                               </button>
                             </div>
                           ))}
                         </div>
 
-                        <div className="flex flex-wrap gap-2 shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                        <div className="flex flex-col gap-3 shrink-0 w-full md:w-56 mt-4 md:mt-0 lg:border-l border-[#1D1D1D] lg:pl-6">
                           <button 
                             onClick={() => updateBookingStatus(b.id, 'ready_pickup')}
-                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold block text-center cursor-pointer active:scale-95 transition-all text-nowrap"
+                            className="w-full px-5 py-3.5 bg-[#F7F7F7] text-[#0B0B0B] hover:bg-[#E0E0E0] rounded-xl text-xs font-bold text-center cursor-pointer transition-colors"
                           >
-                            Sah & Siapkan Barang
+                            Approve Transaction
                           </button>
                           
                           <button 
                             onClick={() => updateBookingStatus(b.id, 'cancelled')}
-                            className="px-4 py-2 border border-red-500/20 text-red-500 hover:bg-red-500/5 rounded-xl text-xs font-semibold cursor-pointer active:scale-95 transition-all"
+                            className="w-full px-5 py-3.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                           >
-                            Tolak & Batalkan Sewa
+                            Reject & Cancel
                           </button>
                         </div>
                       </div>
-                    ))
+                    ))}
+                    </div>
                   )}
                 </div>
               )}
@@ -1388,108 +1388,100 @@ export default function AdminDashboard() {
                 <div id="reporting-print-section" className="space-y-8 select-none">
                   
                   {/* Reporting Header Controls */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-neutral-950 border border-neutral-800 p-6 rounded-2xl">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
                     <div>
-                      <h3 className="text-md font-bold text-white uppercase tracking-wider">Pusat Laporan & Rekapitulasi Keuangan</h3>
-                      <p className="text-xs text-neutral-500 mt-1">Saring frekuensi buku pesanan, omset kotor, rata-rata transaksi harian.</p>
+                      <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Financial & Operations Reports</h3>
+                      <p className="text-sm text-[#BDBDBD] mt-1">Review revenue trends, booking volume, and penalty summaries.</p>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-neutral-400 whitespace-nowrap">Filter Periode:</span>
-                      <div className="flex bg-black border border-neutral-850 p-1 rounded-xl">
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[#BDBDBD]">Timeframe:</span>
+                      <div className="flex bg-[#0B0B0B] border border-[#1D1D1D] p-1.5 rounded-xl">
                         {(['harian', 'mingguan', 'bulanan'] as const).map((p) => (
                           <button
                             key={p}
                             onClick={() => setReportPeriod(p)}
-                            className={`px-3 py-1 text-[10px] font-bold uppercase rounded-lg transition-all cursor-pointer ${reportPeriod === p ? 'bg-[#FF5500] text-white border border-[#FF5500]/20' : 'text-stone-500 hover:text-stone-200'}`}
+                            className={`px-4 py-2 text-xs font-bold capitalize rounded-lg transition-all cursor-pointer ${reportPeriod === p ? 'bg-[#F7F7F7] text-[#0B0B0B]' : 'text-[#BDBDBD] hover:text-[#F7F7F7]'}`}
                           >
-                            {p === 'harian' ? "Hari Ini" : p === 'mingguan' ? "Minggu Ini" : "Bulan Ini"}
+                            {p === 'harian' ? "Today" : p === 'mingguan' ? "This Week" : "This Month"}
                           </button>
                         ))}
                       </div>
                     </div>
                   </div>
 
-                  {/* Operational indicators cards representing summary */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-2xl overflow-hidden flex flex-col justify-between">
+                  {/* Analytics Cards Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-6 rounded-3xl overflow-hidden flex flex-col justify-between h-36">
+                      <p className="text-[10px] text-[#BDBDBD] font-bold uppercase tracking-widest truncate">Booking Volume</p>
                       <div>
-                        <p className="text-[10px] sm:text-xs text-stone-400 font-bold uppercase tracking-wider truncate">Volume Transaksi</p>
-                        <p className="text-lg sm:text-xl lg:text-2xl font-black text-white mt-1.5 truncate block" title={`${totalBookingCount} Sewa`}>
-                          {totalBookingCount} Sewa
-                        </p>
+                        <p className="text-3xl font-black text-[#F7F7F7] truncate block">{totalBookingCount}</p>
+                        <p className="text-xs text-[#BDBDBD] mt-1 truncate">Completed rentals</p>
                       </div>
-                      <p className="text-[9px] sm:text-[10px] text-stone-500 mt-1.5 truncate">Berhasil tanpa dibatalkan</p>
                     </div>
 
-                    <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-6 rounded-3xl overflow-hidden flex flex-col justify-between h-36">
+                      <p className="text-[10px] text-[#BDBDBD] font-bold uppercase tracking-widest truncate">Total Revenue</p>
                       <div>
-                        <p className="text-[10px] sm:text-xs text-stone-400 font-bold uppercase tracking-wider truncate">Total Pendapatan</p>
-                        <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#FF5500] mt-1.5 truncate block" title={`Rp ${totalRevenue.toLocaleString("id-ID")}`}>
-                          Rp {totalRevenue.toLocaleString("id-ID")}
-                        </p>
+                        <p className="text-3xl font-black text-[#F7F7F7] truncate block">Rp {totalRevenue.toLocaleString("id-ID")}</p>
+                        <p className="text-xs text-[#BDBDBD] mt-1 truncate">Gross profit this period</p>
                       </div>
-                      <p className="text-[9px] sm:text-[10px] text-stone-500 mt-1.5 truncate">Akumulasi sewa yang sah</p>
                     </div>
 
-                    <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-6 rounded-3xl overflow-hidden flex flex-col justify-between h-36">
+                      <p className="text-[10px] text-[#BDBDBD] font-bold uppercase tracking-widest truncate">Avg Order Value</p>
                       <div>
-                        <p className="text-[10px] sm:text-xs text-stone-400 font-bold uppercase tracking-wider truncate">Rata-rata Tiket</p>
-                        <p className="text-lg sm:text-xl lg:text-2xl font-black text-white mt-1.5 truncate block" title={`Rp ${avgTicketSize.toLocaleString("id-ID")}`}>
-                          Rp {avgTicketSize.toLocaleString("id-ID")}
-                        </p>
+                        <p className="text-3xl font-black text-[#F7F7F7] truncate block">Rp {avgTicketSize.toLocaleString("id-ID")}</p>
+                        <p className="text-xs text-[#BDBDBD] mt-1 truncate">Average spending per user</p>
                       </div>
-                      <p className="text-[9px] sm:text-[10px] text-stone-500 mt-1.5 truncate">Nilai spending per transaksi</p>
                     </div>
 
-                    <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-6 rounded-3xl overflow-hidden flex flex-col justify-between h-36">
+                      <p className="text-[10px] text-[#BDBDBD] font-bold uppercase tracking-widest truncate">Active Penalties</p>
                       <div>
-                        <p className="text-[10px] sm:text-xs text-stone-400 font-bold uppercase tracking-wider truncate">Keterlambatan/Denda</p>
-                        <p className="text-lg sm:text-xl lg:text-2xl font-black text-white mt-1.5 truncate block" title={`${delayCount} Unit`}>
-                          {delayCount} Unit
-                        </p>
+                        <p className="text-3xl font-black text-red-500 truncate block">{delayCount}</p>
+                        <p className="text-xs text-[#BDBDBD] mt-1 truncate">Late returns & damages</p>
                       </div>
-                      <p className="text-[9px] sm:text-[10px] text-stone-500 mt-1.5 truncate">Pelanggar syarat tenggat sewa</p>
                     </div>
                   </div>
 
-                  {/* Summary detailed tabular listing */}
-                  <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 overflow-hidden">
-                    <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider font-mono">Tabel Log Book Transaksi Sah</h4>
+                  {/* Transaction Log Table */}
+                  <div className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-8 overflow-hidden">
+                    <h4 className="text-sm font-bold text-[#F7F7F7] mb-6 uppercase tracking-widest font-mono">Transaction Logs</h4>
                     
                     <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs">
+                      <table className="w-full text-left text-sm whitespace-nowrap">
                         <thead>
-                          <tr className="border-b border-neutral-800 text-stone-400 uppercase tracking-widest text-[9px] font-extrabold pb-3">
-                            <th className="pb-3 text-left">Kode Booking</th>
-                            <th className="pb-3 text-left">Pelanggan</th>
-                            <th className="pb-3 text-left">Tanggal Sewa</th>
-                            <th className="pb-3 text-left">Status</th>
-                            <th className="pb-3 text-right">Nilai Transaksi</th>
+                          <tr className="border-b border-[#1D1D1D] text-[#BDBDBD] uppercase tracking-widest text-[10px] font-bold">
+                            <th className="pb-4 text-left font-semibold">Booking ID</th>
+                            <th className="pb-4 text-left font-semibold px-4">Customer Name</th>
+                            <th className="pb-4 text-left font-semibold px-4">Rental Duration</th>
+                            <th className="pb-4 text-left font-semibold px-4">Status</th>
+                            <th className="pb-4 text-right font-semibold">Final Value</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-neutral-800/40">
+                        <tbody className="divide-y divide-[#1D1D1D]">
                           {reportsList.length === 0 ? (
                             <tr>
-                              <td colSpan={5} className="py-8 text-center text-stone-500 italic">Belum ada transaksi di rentang waktu terpilih</td>
+                              <td colSpan={5} className="py-12 text-center text-[#BDBDBD] italic">No transaction data available for this timeframe.</td>
                             </tr>
                           ) : (
                             reportsList.map((rep) => (
-                              <tr key={rep.id} className="text-stone-300 hover:bg-neutral-950/40">
-                                <td className="py-3.5 font-mono font-bold text-[#FF5500]">{rep.bookingNumber}</td>
-                                <td className="py-3.5 truncate font-bold text-white">{rep.customer_name || rep.custName}</td>
-                                <td className="py-3.5 font-medium">{new Date(rep.start_date || rep.start).toLocaleDateString("id-ID")} - {new Date(rep.end_date || rep.end).toLocaleDateString("id-ID")}</td>
-                                <td className="py-3.5">
-                                  <span className="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase border border-neutral-800 bg-neutral-950 text-stone-300">
+                              <tr key={rep.id} className="text-[#F7F7F7] hover:bg-[#1D1D1D]/50 transition-colors">
+                                <td className="py-4 font-mono font-bold">{rep.bookingNumber}</td>
+                                <td className="py-4 font-medium px-4">{rep.customer_name || rep.custName}</td>
+                                <td className="py-4 text-[#BDBDBD] px-4">{new Date(rep.start_date || rep.start).toLocaleDateString("id-ID")} - {new Date(rep.end_date || rep.end).toLocaleDateString("id-ID")}</td>
+                                <td className="py-4 px-4">
+                                  <span className="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-[#1D1D1D] bg-[#0B0B0B]">
                                     {rep.status}
                                   </span>
                                 </td>
-                                <td className="py-3.5 text-right font-extrabold text-stone-100">Rp {rep.total_price?.toLocaleString("id-ID") || rep.total?.toLocaleString("id-ID")}</td>
+                                <td className="py-4 text-right font-bold text-[#F7F7F7]">Rp {rep.total_price?.toLocaleString("id-ID") || rep.total?.toLocaleString("id-ID")}</td>
                               </tr>
                             ))
                           )}
                         </tbody>
-                      </table>
+                       </table>
                     </div>
                   </div>
                 </div>
@@ -1497,20 +1489,18 @@ export default function AdminDashboard() {
 
               {/* ------------------ MENU 7: MAINTENANCE CENTER ------------------ */}
               {activeTab === 'maintenance' && (
-                <div className="space-y-6">
-                  <div className="bg-neutral-950 border border-neutral-800 p-6 rounded-2xl">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">Pusat Laboratorium Pemeliharaan & Higienitas Alat</h3>
-                    <p className="text-xs text-neutral-500 leading-normal">
-                      Menampilkan unit fisik inventori yang sedang berada dalam bengkel untuk pencucian sanitasi berkala, jahit tambal kebocoran tenda, atau penambalan goresan pasca digunakan di gunung.
-                    </p>
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Maintenance Lab</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">Active service repairs, washing, and part replacement queue.</p>
                   </div>
 
                   {totalInMaintenance === 0 ? (
-                    <div className="bg-neutral-950/40 border border-neutral-800 p-12 text-center rounded-2xl text-neutral-500 text-sm">
-                      Semua unit dalam keadaan sehat, prima, dan siap disewa! Tidak ada unit di ruang perawatan.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      All inventory units are in optimal condition. No units in maintenance.
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {inventoryItems.map((item) => {
                         const maintUnits = item.units?.filter((u: any) => u.status === "maintenance") || [];
                         if (maintUnits.length === 0) return null;
@@ -1518,28 +1508,30 @@ export default function AdminDashboard() {
                         return maintUnits.map((unit: any) => (
                           <div 
                             key={unit.id} 
-                            className="bg-neutral-950/40 border border-neutral-800 rounded-xl p-5 flex flex-col justify-between gap-4 shadow-inner"
+                            className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-6 flex flex-col justify-between shadow-sm"
                           >
-                            <div className="space-y-2">
-                              <div className="flex justify-between items-center bg-neutral-900 p-2.5 rounded-lg border border-neutral-850">
-                                <span className="font-mono text-xs font-bold text-white">{unit.unitCode}</span>
-                                <span className="text-[10px] uppercase font-extrabold px-2.5 py-0.5 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">
-                                  MAINTENANCE
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center bg-[#0B0B0B] p-4 rounded-xl border border-[#1D1D1D]">
+                                <span className="font-mono text-sm font-bold text-[#F7F7F7]">{unit.unitCode}</span>
+                                <span className="text-[10px] uppercase font-bold tracking-widest px-3 py-1 bg-blue-500/10 text-blue-400 rounded-md">
+                                  IN MAINTENANCE
                                 </span>
                               </div>
-                              <p className="text-xs text-neutral-300 font-bold pt-1">Produk Pokok: {item.name}</p>
-                              <p className="text-[11px] text-neutral-500 italic leading-relaxed">
-                                Catatan: {unit.condition || "Pembersihan lumpur rumbah, pencucian berkala."}
-                              </p>
+                              <div className="px-2">
+                                <p className="text-sm font-bold text-[#F7F7F7]">{item.name}</p>
+                                <p className="text-xs text-[#BDBDBD] mt-1 leading-relaxed">
+                                  Diagnosis: {unit.condition || "Routine wash and waterproof spray application."}
+                                </p>
+                              </div>
                             </div>
 
-                            <div className="pt-2 border-t border-neutral-850 flex justify-between items-center">
-                              <span className="text-[10px] text-neutral-550 block text-neutral-500 uppercase tracking-widest font-bold">Biaya: Rp 0 (Routine)</span>
+                            <div className="pt-6 mt-6 border-t border-[#1D1D1D] flex justify-between items-center px-2">
+                              <span className="text-[10px] text-[#BDBDBD] uppercase tracking-widest font-bold">Cost: 0 IDR</span>
                               <button
-                                onClick={() => handleUpdateUnitStatus(unit.id, "available", "Prima - Steril Siap Pakai")}
-                                className="px-3 py-1.5 bg-white text-black font-bold rounded-lg text-[10px] uppercase cursor-pointer hover:bg-neutral-205 transition-all text-nowrap"
+                                onClick={() => handleUpdateUnitStatus(unit.id, "available", "Optimal")}
+                                className="px-4 py-2.5 bg-[#F7F7F7] text-[#0B0B0B] hover:bg-[#E0E0E0] font-bold rounded-xl text-xs flex items-center gap-2 cursor-pointer transition-colors whitespace-nowrap"
                               >
-                                Selesaikan Perawatan &rArr; Ready
+                                <CheckCircle2 size={14} /> Finish Repair
                               </button>
                             </div>
                           </div>
@@ -1552,111 +1544,88 @@ export default function AdminDashboard() {
 
               {/* ------------------ MENU: DAMAGE MANAGEMENT CENTER ------------------ */}
               {activeTab === 'damage_management' && (
-                <div className="space-y-6">
-                  <div className="bg-[#0b0f0c] p-6 rounded-2xl">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">Pusat Pengelolaan Unit Rusak & Penyelamatan Inventori</h3>
-                    <p className="text-xs text-neutral-500 leading-normal">
-                      Mengawasi, mencatat level kerusakan fisik, dan mengevaluasi status rongsokan unit penyewaan. Tentukan keputusan untuk menginvestasikan biaya jahit/cuci perawatan ulang, menghibahkan/menjual rongsok (dispose), atau mengganti baru secara utuh.
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">Damage Control Center</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">
+                      Evaluate damaged gear inventory. Assign to maintenance repair, dispose of completely, or purchase replacements.
                     </p>
                   </div>
 
                   {totalDamaged === 0 ? (
-                    <div className="bg-[#0b0f0c]/40 p-12 text-center rounded-2xl text-neutral-500 text-sm">
-                      Luar biasa! Tidak ada unit alat gunung dalam keadaan rusak/cacat. Semua siap operasional.
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-16 text-center rounded-3xl text-[#BDBDBD] text-sm">
+                      Exceptional! No inventory units are reported damaged or broken.
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {inventoryItems.flatMap((item) => {
                         const damagedUnits = item.units?.filter((u: any) => u.status === "damaged") || [];
                         return damagedUnits.map((unit: any) => {
-                          const tingkat = damageTingkat[unit.id] || "Sedang";
+                          const tingkat = damageTingkat[unit.id] || "Moderate";
                           const catatan = damageCatatan[unit.id] || "";
                           
                           return (
                             <div 
                               key={unit.id} 
-                              className="bg-[#0b0f0c]/60 p-6 rounded-2xl flex flex-col justify-between gap-5 shadow-inner"
+                              className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-6 flex flex-col justify-between shadow-sm"
                             >
-                              <div className="space-y-4">
-                                <div className="flex justify-between items-center bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-xs font-extrabold text-[#FF5500] uppercase bg-neutral-900 px-2.5 py-1 rounded">
-                                      {unit.unitCode}
-                                    </span>
-                                  </div>
-                                  <span className="text-[10px] uppercase font-extrabold px-3 py-1 bg-red-500/10 text-red-500 rounded-full border border-red-500/20 animate-pulse">
+                              <div className="space-y-6">
+                                <div className="flex justify-between items-center">
+                                  <span className="font-mono text-sm font-bold text-[#F7F7F7] bg-[#0B0B0B] border border-[#1D1D1D] px-3 py-1 rounded-md">
+                                    {unit.unitCode}
+                                  </span>
+                                  <span className="text-[9px] uppercase tracking-widest font-bold px-3 py-1 bg-red-500/10 text-red-500 rounded-md">
                                     DAMAGED
                                   </span>
                                 </div>
                                 
-                                <div className="space-y-1">
-                                  <p className="text-xs text-stone-400 font-medium font-mono">Model / Tipe Produk:</p>
-                                  <p className="text-sm font-bold text-white">{item.name}</p>
-                                  <p className="text-[11px] text-[#FF5500] font-semibold">{item.category?.name || "Peralatan Mendaki"}</p>
+                                <div>
+                                  <p className="text-sm font-bold text-[#F7F7F7]">{item.name}</p>
+                                  <p className="text-xs text-[#BDBDBD] mt-1">{item.category?.name || "Equipment"}</p>
                                 </div>
 
-                                <div className="space-y-1">
-                                  <p className="text-xs text-stone-400 font-medium font-mono">Terdeteksi Rusak Sejak:</p>
-                                  <p className="text-xs font-semibold text-neutral-300 font-mono">
-                                    {unit.updatedAt ? new Date(unit.updatedAt).toLocaleDateString("id-ID") : new Date().toLocaleDateString("id-ID")}
-                                  </p>
-                                </div>
-
-                                {/* Form inputs values */}
-                                <div className="grid grid-cols-1 gap-3.5 pt-2 border-t border-neutral-800">
+                                <div className="space-y-4 pt-4 border-t border-[#1D1D1D]">
                                   <div>
-                                    <label className="block text-[10px] font-extrabold text-[#FF5500] uppercase tracking-widest mb-1.5 leading-none">Tingkat Kerusakan:</label>
+                                    <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-2">Severity Level:</label>
                                     <select
                                       value={tingkat}
                                       onChange={(e) => setDamageTingkat(prev => ({ ...prev, [unit.id]: e.target.value }))}
-                                      className="w-full px-3 py-2 text-xs bg-neutral-950 text-stone-250 border border-neutral-800 rounded-xl focus:border-[#FF5500] focus:outline-none focus:ring-0 cursor-pointer font-bold"
+                                      className="w-full px-4 py-3 text-xs bg-[#0B0B0B] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none cursor-pointer"
                                     >
-                                      <option value="Ringan">Minder / Ringan (Sobek Kecil, Kotor Kerak)</option>
-                                      <option value="Sedang">Sedang (Patah Frame, Kebocoran Air)</option>
-                                      <option value="Berat">Parah / Rusak Berat (Robek Total, Hilang Part UTAMA)</option>
+                                      <option value="Minor">Minor (Small tears, dirt)</option>
+                                      <option value="Moderate">Moderate (Broken frame, leaks)</option>
+                                      <option value="Severe">Severe (Destroyed, missing parts)</option>
                                     </select>
                                   </div>
 
                                   <div>
-                                    <label className="block text-[10px] font-extrabold text-[#FF5500] uppercase tracking-widest mb-1.5 leading-none font-mono">Rincian Deskripsi Kerusakan Fisik:</label>
+                                    <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-2">Diagnostic Notes:</label>
                                     <textarea
                                       value={catatan}
                                       onChange={(e) => setDamageCatatan(prev => ({ ...prev, [unit.id]: e.target.value }))}
-                                      placeholder="Contoh: FRAME PENYANGGA TENDA PATAH 1 RUAS KARENA ANGIN KENCANG..."
+                                      placeholder="Example: Broken tent frame segment..."
                                       rows={2}
-                                      className="w-full px-3.5 py-2.5 text-xs bg-neutral-950 text-white border border-neutral-800 rounded-xl focus:border-[#FF5500] focus:outline-none placeholder-stone-600 leading-normal"
+                                      className="w-full px-4 py-3 text-xs bg-[#0B0B0B] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none resize-none"
                                     />
                                   </div>
                                 </div>
                               </div>
 
-                              <div className="pt-4 border-t border-[#1a231c]/60 space-y-2.5">
-                                <p className="text-[10px] font-extrabold text-stone-500 uppercase tracking-wider">PILIH TINDAKAN PENYELAMATAN UNIT:</p>
-                                <div className="grid grid-cols-3 gap-2">
-                                  <button
-                                    onClick={() => handleDamageDecision(unit.id, "maintenance", tingkat, catatan)}
-                                    className="px-2.5 py-2.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 rounded-xl text-[10px] font-bold uppercase transition-all flex flex-col justify-center items-center text-center gap-1 cursor-pointer border border-blue-500/15"
-                                  >
-                                    <span>REPAIR</span>
-                                    <span className="text-[8px] text-blue-500 font-medium capitalize">Kirim Ke Perawatan</span>
-                                  </button>
-
-                                  <button
-                                    onClick={() => handleDamageDecision(unit.id, "disposed", tingkat, catatan)}
-                                    className="px-2.5 py-2.5 bg-amber-600/10 hover:bg-amber-600/20 text-amber-500 rounded-xl text-[10px] font-bold uppercase transition-all flex flex-col justify-center items-center text-center gap-1 cursor-pointer border border-amber-500/15"
-                                  >
-                                    <span>DISPOSE</span>
-                                    <span className="text-[8px] text-amber-600 font-medium capitalize">Buang Dari Stok</span>
-                                  </button>
-
-                                  <button
-                                    onClick={() => handleDamageDecision(unit.id, "available", tingkat, `Diganti unit baru pasca rusak ${tingkat}`)}
-                                    className="px-2.5 py-2.5 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 rounded-xl text-[10px] font-bold uppercase transition-all flex flex-col justify-center items-center text-center gap-1 cursor-pointer border border-emerald-500/15"
-                                  >
-                                    <span>REPLACE</span>
-                                    <span className="text-[8px] text-emerald-500 font-medium capitalize">Beli Baru & Ganti</span>
-                                  </button>
-                                </div>
+                              <div className="pt-6 mt-6 border-t border-[#1D1D1D] grid grid-cols-2 gap-3">
+                                <button
+                                  title="Send to Repair"
+                                  onClick={() => handleDamageDecision(unit.id, "maintenance", tingkat, catatan)}
+                                  className="py-3 bg-[#0B0B0B] hover:bg-[#1D1D1D] text-[#F7F7F7] rounded-xl text-xs font-bold uppercase transition-colors border border-[#1D1D1D] flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                  <Wrench size={14} /> Repair
+                                </button>
+                                <button
+                                  title="Dispose Unit"
+                                  onClick={() => handleDamageDecision(unit.id, "disposed", tingkat, catatan)}
+                                  className="py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl text-xs font-bold uppercase transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                  <XCircle size={14} /> Dispose
+                                </button>
                               </div>
                             </div>
                           );
@@ -1670,68 +1639,74 @@ export default function AdminDashboard() {
               {/* ------------------ MENU 8: DEMO SIMULATION COCKPIT ------------------ */}
               {activeTab === 'demo_simulation' && (
                 <div className="space-y-8">
-                  <div className="bg-neutral-950 border border-neutral-800 p-6 rounded-2xl relative overflow-hidden shadow-inner flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div className="space-y-1.5">
-                      <span className="text-[9px] uppercase tracking-widest font-extrabold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div className="space-y-2">
+                      <span className="text-[10px] uppercase tracking-widest font-bold bg-[#F7F7F7] text-[#0B0B0B] px-3 py-1.5 rounded-md">
                         DEMO SANDBOX COCKPIT
                       </span>
-                      <h3 className="text-md font-bold text-white uppercase tracking-wider pt-2">Simulasi Keadaan & Sinkronisasi Cepat</h3>
-                      <p className="text-xs text-neutral-500 leading-normal max-w-xl">
-                        Uji coba alur transaksi secara praktis! Simulator ini memungkinkan Anda menguji coba verifikasi, log audit, penalti denda dsb secara instan tanpa perlu mendaftar banyak akun asli.
+                      <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight pt-2">Simulated Data Matrix</h3>
+                      <p className="text-sm text-[#BDBDBD] max-w-xl">
+                        Inject mock events into the database to test verifications, notifications, and penalties without real user accounts. 
                       </p>
                     </div>
 
                     <button 
                       onClick={handleResetData}
-                      className="px-4 py-2.5 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-xl border border-red-500/20 transition-all font-bold text-xs uppercase cursor-pointer"
+                      className="px-6 py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl border border-red-500/10 transition-colors font-bold text-xs uppercase cursor-pointer whitespace-nowrap"
                     >
-                      Reset Simulat Data
+                      Factory Reset Data
                     </button>
                   </div>
 
                   {/* Actions cockpit */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-neutral-950/60 border border-neutral-800 p-6 rounded-2xl space-y-4 shadow-sm">
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-neutral-800">
-                        <PlusCircle size={14} className="text-blue-400" /> Pembuatan Event Acak (Mock Generator)
-                      </h4>
-                      <p className="text-xs text-neutral-500 leading-relaxed">
-                        Simulasikan pelanggan melakukan check-out peralatan sewa atau pendaftaran berkas KTP palsu untuk menguji fungsionalitas visual denda dsb.
-                      </p>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl space-y-6">
+                      <div className="pb-4 border-b border-[#1D1D1D]">
+                        <h4 className="text-sm font-bold text-[#F7F7F7] uppercase tracking-widest flex items-center gap-2">
+                          <PlusCircle size={16} /> Event Generators
+                        </h4>
+                        <p className="text-xs text-[#BDBDBD] mt-2">
+                          Trigger automated transactions or new user registrations.
+                        </p>
+                      </div>
 
-                      <div className="flex flex-wrap gap-2.5 pt-2">
+                      <div className="flex flex-col gap-4">
                         <button
                           onClick={simulateRandomBooking}
-                          className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] uppercase tracking-wider rounded-xl transition-all cursor-pointer active:scale-95"
+                          className="w-full py-4 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] font-bold text-xs uppercase tracking-widest rounded-xl transition-colors cursor-pointer text-center"
                         >
-                          + Simulasikan Sewa Baru
+                          Push Mock Rental Booking
                         </button>
                         <button
                           onClick={simulateRandomCustomer}
-                          className="px-3.5 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-bold text-[11px] uppercase tracking-wider rounded-xl transition-all cursor-pointer border border-neutral-700"
+                          className="w-full py-4 bg-[#0B0B0B] hover:bg-[#1D1D1D] border border-[#1D1D1D] text-[#F7F7F7] font-bold text-xs uppercase tracking-widest rounded-xl transition-colors cursor-pointer text-center"
                         >
-                          + Simulasikan Pelanggan Baru
+                          Register Mock Customer
                         </button>
                       </div>
                     </div>
 
-                    <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4 flex flex-col justify-between shadow-sm">
-                      <div>
-                        <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 pb-3 border-b border-neutral-800">
-                          <Activity size={14} className="text-[#FF5500]" /> Log Tindakan Riwayat Sistem
+                    <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl flex flex-col h-full max-h-[400px]">
+                      <div className="pb-4 border-b border-[#1D1D1D] shrink-0">
+                        <h4 className="text-sm font-bold text-[#F7F7F7] uppercase tracking-widest flex items-center gap-2">
+                          <Activity size={16} /> Audit Stream
                         </h4>
-                        
-                        {/* Stream of system notifications / logs */}
-                        <div className="space-y-2 mt-4 max-h-36 overflow-y-auto pr-1">
-                          {eventLogs.map((log, idx) => (
-                            <div key={idx} className="flex justify-between items-center text-[11px] font-mono border-b border-neutral-800/40 pb-1.5">
-                              <span className="truncate max-w-[70%] text-stone-300">
-                                <b className="text-[#FF5500] mr-1">[{log.type}]</b> {log.message}
+                      </div>
+                      
+                      {/* Stream of system notifications / logs */}
+                      <div className="space-y-4 mt-6 overflow-y-auto pr-2 flex-1">
+                        {eventLogs.length === 0 ? (
+                          <div className="text-center text-[#BDBDBD] text-xs italic py-4">No events logged in current session.</div>
+                        ) : (
+                          eventLogs.map((log, idx) => (
+                            <div key={idx} className="flex justify-between items-start text-xs font-mono border-b border-[#1D1D1D]/50 pb-3 gap-4">
+                              <span className="text-[#F7F7F7] break-words">
+                                <b className="text-[#BDBDBD] mr-2">[{log.type}]</b> {log.message}
                               </span>
-                              <span className="text-[9px] text-stone-550 shrink-0">{new Date(log.timestamp).toLocaleTimeString("id-ID")}</span>
+                              <span className="text-[10px] text-[#BDBDBD] shrink-0">{new Date(log.timestamp).toLocaleTimeString("id-ID")}</span>
                             </div>
-                          ))}
-                        </div>
+                          ))
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1740,68 +1715,64 @@ export default function AdminDashboard() {
 
               {/* ------------------ MENU 9: SYSTEM CONFIGURATION SETTINGS ------------------ */}
               {activeTab === 'settings' && (
-                <div className="space-y-6">
-                  <div className="bg-neutral-950 border border-neutral-800 p-6 rounded-2xl">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2 font-mono">Konfigurasi Hukum & Ketentuan Toko</h3>
-                    <p className="text-xs text-neutral-500 leading-normal">
-                      Sesuaikan denda pelanggaran telat pengembalian, nominal jaminan deposit fisik, dan cabang utama kustomisasi Outrent.
+                <div className="space-y-8">
+                  <div className="bg-[#151515] border border-[#1D1D1D] p-8 rounded-3xl">
+                    <h3 className="text-lg font-bold text-[#F7F7F7] tracking-tight">System & Business Rules</h3>
+                    <p className="text-sm text-[#BDBDBD] mt-2">
+                      Configure base operational parameters, penalty rates, and core validation flows.
                     </p>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); toast.success("Sistem dikonfigurasi & disimpan!"); addLocalLog("SISTEM", "Konfigurasi toko diperbarui"); }} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 md:p-8 space-y-6 max-w-2xl shadow-inner">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form onSubmit={(e) => { e.preventDefault(); toast.success("Settings applied"); addLocalLog("SISTEM", "Konfigurasi toko diperbarui"); }} className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-8 space-y-8 max-w-3xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider mb-2 leading-none">Biaya Denda Keterlambatan (Rp/Hari):</label>
+                        <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Daily Late Penalty (IDR):</label>
                         <input
                           type="number"
                           value={penaltyRate}
                           onChange={(e) => setPenaltyRate(e.target.value)}
-                          className="w-full px-4 py-3 text-xs bg-neutral-950 text-white border border-neutral-800 rounded-xl focus:ring-1 focus:ring-[#FF5500] focus:outline-none focus:border-[#FF5500] font-mono font-bold"
+                          className="w-full px-5 py-4 text-sm bg-[#0B0B0B] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono font-bold transition-colors"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider mb-2 leading-none">Jaminan Deposit Unit default (Rp):</label>
+                        <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Standard Deposit (IDR):</label>
                         <input
                           type="number"
                           value={rentalDeposit}
                           onChange={(e) => setRentalDeposit(e.target.value)}
-                          className="w-full px-4 py-3 text-xs bg-neutral-950 border border-neutral-800 text-white rounded-xl focus:ring-1 focus:ring-[#FF5500] focus:outline-none focus:border-[#FF5500] font-mono font-bold"
+                          className="w-full px-5 py-4 text-sm bg-[#0B0B0B] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono font-bold transition-colors"
                           required
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-extrabold text-[#FF5500] uppercase tracking-wider mb-2 leading-none font-mono">Cabang Utama Toko:</label>
+                      <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Primary Base Branch:</label>
                       <input
                         type="text"
                         value={mainBranch}
                         onChange={(e) => setMainBranch(e.target.value)}
-                        className="w-full px-4 py-3 text-xs bg-neutral-950 border border-neutral-800 text-white rounded-xl focus:ring-1 focus:ring-[#FF5500] focus:outline-none focus:border-[#FF5500]"
+                        className="w-full px-5 py-4 text-sm bg-[#0B0B0B] text-[#F7F7F7] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
                         required
                       />
                     </div>
 
-                    <div className="flex items-center gap-3 bg-neutral-955/65 border border-neutral-800 p-4 rounded-xl">
-                      <input
-                        type="checkbox"
-                        id="verify-check"
-                        checked={requireVerify}
-                        onChange={(e) => setRequireVerify(e.target.checked)}
-                        className="w-4 h-4 text-[#FF5500] border-neutral-800 bg-neutral-950 rounded focus:ring-[#FF5500] cursor-pointer accent-[#FF5500]"
-                      />
-                      <label htmlFor="verify-check" className="text-xs text-neutral-300 font-semibold cursor-pointer select-none">
-                        Wajibkan Pengesahan Identitas Berkas KTP Sebelum Berhak Menyewa Alat
+                    <div className="flex items-center gap-4 bg-[#0B0B0B] border border-[#1D1D1D] p-5 rounded-xl cursor-pointer" onClick={() => setRequireVerify(!requireVerify)}>
+                      <div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${requireVerify ? 'bg-[#F7F7F7] border-[#F7F7F7]' : 'bg-[#151515] border-[#1D1D1D]'}`}>
+                        {requireVerify && <CheckCircle2 size={16} className="text-[#0B0B0B]" />}
+                      </div>
+                      <label htmlFor="verify-check" className="text-sm text-[#F7F7F7] font-semibold cursor-pointer select-none">
+                        Require strict Identity Document (KTP) verification prior to rental approvals
                       </label>
                     </div>
 
-                    <div className="flex justify-end pt-2">
+                    <div className="flex justify-end pt-4 border-t border-[#1D1D1D]">
                       <button
                         type="submit"
-                        className="px-6 py-2.5 bg-[#FF5500] hover:bg-[#FF3300] border border-[#FF5500]/25 text-white text-xs font-bold rounded-xl active:scale-95 transition-all cursor-pointer shadow-sm shadow-[#FF5500]/10"
+                        className="px-8 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] text-sm font-bold rounded-xl transition-colors cursor-pointer"
                       >
-                        Simpan Perubahan
+                        Commit Changes
                       </button>
                     </div>
                   </form>
@@ -1816,56 +1787,56 @@ export default function AdminDashboard() {
 
       {/* ------------------ MODAL 1: KENAKAN DENDA FORM MODAL ------------------ */}
       {penaltyBooking && (
-        <div id="penalty-dialog-modal" className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 select-none">
-          <div className="bg-neutral-900 border border-neutral-800 text-neutral-100 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative animate-scale-up">
-            <h3 className="text-lg font-bold text-white mb-1">
-              Bebankan Denda Keterlambatan / Kerusakan
+        <div id="penalty-dialog-modal" className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4 select-none">
+          <div className="bg-[#151515] border border-[#1D1D1D] text-[#F7F7F7] rounded-3xl p-8 w-full max-w-md shadow-2xl relative animate-scale-up">
+            <h3 className="text-xl font-bold text-[#F7F7F7] mb-2 tracking-tight">
+              Log Penalty Entry
             </h3>
-            <p className="text-xs text-neutral-400 mb-5 leading-normal">
-              Reservasi {penaltyBooking.bookingNumber} (&bull; {penaltyBooking.customer_name || penaltyBooking.custName}) dibebankan denda pertanggungjawaban fisik.
+            <p className="text-xs text-[#BDBDBD] mb-6 leading-normal">
+              Booking <b className="text-[#F7F7F7] font-mono">{penaltyBooking.bookingNumber}</b> for {penaltyBooking.customer_name || penaltyBooking.custName}. Please enter violation details.
             </p>
 
-            <form onSubmit={handleAssignPenalty} className="space-y-4">
+            <form onSubmit={handleAssignPenalty} className="space-y-6">
               <div>
-                <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Alasan Pelanggaran:</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Infraction Type:</label>
                 <select
                   value={penaltyReason}
                   onChange={e => setPenaltyReason(e.target.value)}
-                  className="w-full px-4 py-3 text-xs bg-neutral-950 border border-neutral-800 rounded-xl focus:ring-1 focus:ring-[#FF5500] focus:outline-none text-white select-none"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none text-[#F7F7F7] select-none transition-colors"
                 >
-                  <option value="Keterlambatan Pengembalian (1 Hari)">Keterlambatan Pengembalian (1 Hari)</option>
-                  <option value="Keterlambatan Pengembalian (2 Hari)">Keterlambatan Pengembalian (2 Hari)</option>
-                  <option value="Kerusakan Ringan pada Peralatan">Kerusakan Ringan pada Peralatan (Gores / Robek)</option>
-                  <option value="Tenda Rusak/Sobek Parah (Pecah Frame)">Tenda Rusak/Sobek Parah (Pecah Frame)</option>
-                  <option value="Ganti Unit Total (Kehilangan Unit Sewa)">Ganti Unit Total (Kehilangan Unit Sewa)</option>
+                  <option value="Keterlambatan Pengembalian (1 Hari)">1 Day Late Return</option>
+                  <option value="Keterlambatan Pengembalian (2 Hari)">2 Days Late Return</option>
+                  <option value="Kerusakan Ringan pada Peralatan">Minor Damage (Scratches/Tears)</option>
+                  <option value="Tenda Rusak/Sobek Parah (Pecah Frame)">Severe Damage (Broken Frame/Rip)</option>
+                  <option value="Ganti Unit Total (Kehilangan Unit Sewa)">Missing/Lost Item (Full Replacement)</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Nilai Charge Denda (Rupiah):</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Penalty Amount (IDR):</label>
                 <input
                   type="number"
-                  placeholder="Contoh: 50000"
+                  placeholder="e.g. 50000"
                   value={penaltyAmount}
                   onChange={e => setPenaltyAmount(e.target.value)}
-                  className="w-full px-4 py-3 text-xs bg-neutral-950 border border-neutral-800 rounded-xl focus:ring-1 focus:ring-[#FF5500] focus:outline-none focus:border-[#FF5500] font-bold font-mono text-white"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none text-[#F7F7F7] font-bold font-mono transition-colors"
                   required
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-4 pt-4 border-t border-[#1D1D1D]">
                 <button
                   type="button"
                   onClick={() => setPenaltyBooking(null)}
-                  className="flex-1 px-4 py-2.5 bg-neutral-800 text-neutral-300 text-xs font-bold rounded-xl hover:bg-neutral-700 cursor-pointer"
+                  className="flex-1 px-5 py-3.5 bg-[#0B0B0B] hover:bg-[#1D1D1D] border border-[#1D1D1D] text-[#F7F7F7] text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 bg-[#FF5500] hover:bg-[#FF3300] border border-[#FF5500]/25 text-white text-xs font-bold rounded-xl cursor-pointer transition-all active:scale-95 shadow-sm shadow-[#FF5500]/10"
+                  className="flex-1 px-5 py-3.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Sahkan Denda
+                  Log Penalty
                 </button>
               </div>
             </form>
@@ -1875,65 +1846,65 @@ export default function AdminDashboard() {
 
       {/* ------------------ MODAL 2: DETAIL LOG MAINTENANCE FORM MODAL ------------------ */}
       {maintenanceUnit && (
-        <div id="maintenance-dialog-modal" className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 text-neutral-100 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative animate-scale-up">
-            <h3 className="text-lg font-bold text-white mb-1">
-              Catat Pemeliharaan Fisik Alat
+        <div id="maintenance-dialog-modal" className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#151515] border border-[#1D1D1D] text-[#F7F7F7] rounded-3xl p-8 w-full max-w-md shadow-2xl relative animate-scale-up">
+            <h3 className="text-xl font-bold text-[#F7F7F7] mb-2 tracking-tight">
+              Maintenance Logging
             </h3>
-            <p className="text-xs text-neutral-400 mb-5 leading-normal">
-              Pindahkan unit berkode fisik <code className="font-extrabold text-[#a3b18a]">{maintenanceUnit.unitCode}</code> ke ruang perbaikan, sanitasi, pembersihan atau ganti frame robek.
+            <p className="text-xs text-[#BDBDBD] mb-6 leading-normal">
+              Flag unit <code className="font-extrabold font-mono text-[#F7F7F7] bg-[#0B0B0B] border border-[#1D1D1D] px-1.5 py-0.5 rounded">{maintenanceUnit.unitCode}</code> for repair, deep-cleaning, or part replacement.
             </p>
 
-            <form onSubmit={handleLogMaintenance} className="space-y-4">
+            <form onSubmit={handleLogMaintenance} className="space-y-6">
               <div>
-                <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Kriteria Tindakan:</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Criteria:</label>
                 <select
                   value={maintenanceStatus}
                   onChange={e => setMaintenanceStatus(e.target.value)}
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
                 >
-                  <option value="routine">Routine - Pencucian / Sterilisasi sanitasi</option>
-                  <option value="repair">Repair - Jahit Tambal tenda bocor / Aus</option>
-                  <option value="replaced">Replaced - Pergantian Frame / Suku Cadang</option>
+                  <option value="routine">Routine - Wash & Sterilization</option>
+                  <option value="repair">Repair - Stitching / Hole Patching</option>
+                  <option value="replaced">Replacement - Frame / Core Parts</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Catatan Detail Perawatan:</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Diagnostic Notes:</label>
                 <textarea
-                  placeholder="Contoh: Pembersihan lumpur berat sisa mendaki gunung, pencucian wangi steril."
+                  placeholder="e.g. Heavy mud on inner tent, needs deep scrub."
                   value={maintenanceNotes}
                   onChange={e => setMaintenanceNotes(e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none"
+                  rows={3}
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors resize-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Biaya Logging Tambahan (Rupiah):</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Incurred Cost (IDR):</label>
                 <input
                   type="number"
-                  placeholder="Boleh diisi 0 jika tidak menderita biaya"
+                  placeholder="Set 0 if no additional cost"
                   value={maintenanceCost}
                   onChange={e => setMaintenanceCost(e.target.value)}
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157] font-mono font-bold"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono font-bold transition-colors"
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-4 pt-4 border-t border-[#1D1D1D]">
                 <button
                   type="button"
                   onClick={() => setMaintenanceUnit(null)}
-                  className="flex-1 px-4 py-2.5 bg-neutral-850 text-neutral-305 text-xs font-bold rounded-xl hover:bg-neutral-800 cursor-pointer"
+                  className="flex-1 px-5 py-3.5 bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] hover:bg-[#1D1D1D] text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 bg-[#2d4a36] hover:bg-[#1f3325] border border-[#3a5a40]/30 text-white text-xs font-bold rounded-xl cursor-pointer transition-all active:scale-95 shadow-sm shadow-[#2d4a36]/10"
+                  className="flex-1 px-5 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Kirim ke Perawatan
+                  Log Maintenance
                 </button>
               </div>
             </form>
@@ -1946,40 +1917,30 @@ export default function AdminDashboard() {
         <div 
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-55 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4"
         >
-          <div className="bg-neutral-950 border border-neutral-800 rounded-3xl p-6 w-full max-w-xl shadow-2xl relative space-y-4">
-            <div className="flex justify-between items-center pb-3 border-b border-neutral-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-350">Preview Berkas Foto Jaminan KTP Pelanggan</span>
+          <div className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative space-y-6">
+            <div className="flex justify-between items-center pb-4 border-b border-[#1D1D1D]">
+              <span className="text-sm font-bold uppercase tracking-widest text-[#F7F7F7]">Identity Document Preview</span>
               <button 
                 onClick={() => setSelectedKtpImg(null)}
-                className="text-neutral-500 hover:text-white font-extrabold text-xs uppercase cursor-pointer"
+                className="text-[#BDBDBD] hover:text-[#F7F7F7] font-bold text-xs uppercase cursor-pointer transition-colors px-3 py-1 bg-[#0B0B0B] border border-[#1D1D1D] rounded-lg"
               >
-                Tutup
+                Close
               </button>
             </div>
             
-            <div className="p-4 bg-neutral-900 rounded-2xl flex items-center justify-center border border-neutral-850">
+            <div className="px-4 py-8 bg-[#0B0B0B] rounded-2xl flex items-center justify-center border border-[#1D1D1D]">
               <img 
                 src={`/uploads/${selectedKtpImg}`} 
                 alt="Jaminan KTP asli" 
-                className="max-h-80 rounded-xl object-contain shadow-md"
+                className="max-h-96 rounded-xl object-contain"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   // Fallback sample image
                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80';
                 }}
               />
-            </div>
-            
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => setSelectedKtpImg(null)}
-                className="px-5 py-2 bg-neutral-800 hover:bg-neutral-750 text-white font-bold rounded-xl text-xs cursor-pointer"
-              >
-                Tutup Jendela
-              </button>
             </div>
           </div>
         </div>
@@ -1990,24 +1951,24 @@ export default function AdminDashboard() {
         <div 
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-55 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4"
         >
-          <div className="bg-neutral-950 border border-neutral-800 rounded-3xl p-6 w-full max-w-xl shadow-2xl relative space-y-4">
-            <div className="flex justify-between items-center pb-3 border-b border-neutral-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-350">Preview Slip / Bukti Pembayaran Digital</span>
+          <div className="bg-[#151515] border border-[#1D1D1D] rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative space-y-6">
+            <div className="flex justify-between items-center pb-4 border-b border-[#1D1D1D]">
+              <span className="text-sm font-bold uppercase tracking-widest text-[#F7F7F7]">Transfer Slip Preview</span>
               <button 
                 onClick={() => setSelectedProofImg(null)}
-                className="text-neutral-500 hover:text-white font-extrabold text-xs uppercase cursor-pointer"
+                className="text-[#BDBDBD] hover:text-[#F7F7F7] font-bold text-xs uppercase cursor-pointer transition-colors px-3 py-1 bg-[#0B0B0B] border border-[#1D1D1D] rounded-lg"
               >
-                Tutup
+                Close
               </button>
             </div>
             
-            <div className="p-4 bg-neutral-900 rounded-2xl flex items-center justify-center border border-neutral-850">
+            <div className="px-4 py-8 bg-[#0B0B0B] rounded-2xl flex items-center justify-center border border-[#1D1D1D]">
               <img 
                 src={`/uploads/${selectedProofImg}`} 
                 alt="Bukti Transfer Outrent Bank" 
-                className="max-h-80 rounded-xl object-contain shadow-md"
+                className="max-h-96 rounded-xl object-contain"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   // Fallback sample receipt image
@@ -2015,42 +1976,32 @@ export default function AdminDashboard() {
                 }}
               />
             </div>
-            
-            <div className="flex justify-end pt-2">
-              <button
-                type="button"
-                onClick={() => setSelectedProofImg(null)}
-                className="px-5 py-2 bg-neutral-800 hover:bg-neutral-750 text-white font-bold rounded-xl text-xs cursor-pointer"
-              >
-                Tutup Jendela
-              </button>
-            </div>
           </div>
         </div>
       )}
 
       {/* ------------------ MODAL 5: TAMBAH PRODUCT BARU ------------------ */}
       {showAddInv && (
-        <div id="add-inv-modal" className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 text-neutral-100 rounded-3xl p-6 md:p-8 w-full max-w-xl shadow-2xl relative animate-scale-up">
-            <h3 className="text-lg font-bold text-white mb-1">
-              Tambahkan Katalog & Kode Unit Fisik
+        <div id="add-inv-modal" className="fixed inset-0 z-50 bg-[#0B0B0B]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#151515] border border-[#1D1D1D] text-[#F7F7F7] rounded-3xl p-8 w-full max-w-xl shadow-2xl relative animate-scale-up">
+            <h3 className="text-xl font-bold text-[#F7F7F7] mb-2 tracking-tight">
+              Provision New Equipment
             </h3>
-            <p className="text-xs text-neutral-400 mb-5 leading-normal">
-              Isikan detail produk sewa dan daftar nomor unit fisik berkode unik supaya dapat disimpan di database inventori.
+            <p className="text-xs text-[#BDBDBD] mb-6 leading-normal">
+              Register a new product in the catalog and initialize its associated physical unit serials into the warehouse tracker.
             </p>
 
-            <form onSubmit={handleAddInventory} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleAddInventory} className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Pilih Kategori Katalog:</label>
+                  <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Category:</label>
                   <select
                     value={newInv.categoryId}
                     onChange={e => setNewInv({ ...newInv, categoryId: e.target.value })}
-                    className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157]"
+                    className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
                     required
                   >
-                    <option value="" disabled>-- Pilih Kategori --</option>
+                    <option value="" disabled>-- Select Catalog --</option>
                     {[...new Set(inventoryItems.map(item => item.category ? JSON.stringify({ id: item.category.id, name: item.category.name }) : null).filter(Boolean))].map((str: any) => {
                       const cat = JSON.parse(str);
                       return <option key={cat.id} value={cat.id}>{cat.name}</option>;
@@ -2068,67 +2019,67 @@ export default function AdminDashboard() {
                 </div>
                 
                 <div>
-                  <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Nama Barang:</label>
+                  <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Item Label:</label>
                   <input
                     type="text"
                     value={newInv.name}
                     onChange={e => setNewInv({ ...newInv, name: e.target.value })}
-                    placeholder="Contoh: Carrier Deuter 50L"
-                    className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157]"
+                    placeholder="e.g. Carrier Deuter 50L"
+                    className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Harga Sewa / Hari (Rupiah):</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Rental Tariff (Rp/Day):</label>
                 <input
                   type="number"
                   value={newInv.price}
                   onChange={e => setNewInv({ ...newInv, price: e.target.value })}
-                  placeholder="Contoh: 35000"
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157] font-mono"
+                  placeholder="e.g. 35000"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Penjelasan Detail (Deskripsi):</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Description:</label>
                 <textarea
                   value={newInv.desc}
                   onChange={e => setNewInv({ ...newInv, desc: e.target.value })}
-                  placeholder="Ukuran kantung, bahan polyester anti bocor, dsb."
+                  placeholder="Technical specs, capabilities, condition..."
                   rows={2}
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157]"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none transition-colors resize-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-2">Kode Seri Unit (Pisahkan dengan koma):</label>
+                <label className="block text-[10px] font-bold text-[#BDBDBD] uppercase tracking-widest mb-3">Hardware Serial Codes (Comma separated):</label>
                 <textarea
                   value={newInv.codes}
                   onChange={e => setNewInv({ ...newInv, codes: e.target.value })}
-                  placeholder="Contoh: UNT-CRT-001, UNT-CRT-002, UNT-CRT-003"
+                  placeholder="e.g. UNT-CRT-001, UNT-CRT-002, UNT-CRT-003"
                   rows={2}
-                  className="w-full px-4 py-3 text-xs bg-[#0d110e] border border-[#1a231c]/60 text-white rounded-xl focus:ring-1 focus:ring-[#588157] focus:outline-none focus:border-[#588157] font-mono font-bold"
+                  className="w-full px-5 py-4 text-sm bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] rounded-xl focus:border-[#F7F7F7] focus:ring-0 outline-none font-mono transition-colors resize-none"
                   required
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-4 pt-4 border-t border-[#1D1D1D]">
                 <button
                   type="button"
                   onClick={() => setShowAddInv(false)}
-                  className="flex-1 px-4 py-2.5 bg-neutral-800 text-neutral-300 text-xs font-bold rounded-xl hover:bg-neutral-750 cursor-pointer"
+                  className="flex-1 px-5 py-3.5 bg-[#0B0B0B] border border-[#1D1D1D] text-[#F7F7F7] hover:bg-[#1D1D1D] text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Batal
+                  Discard
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2.5 bg-[#2d4a36] hover:bg-[#1f3325] border border-[#3a5a40]/30 text-white text-xs font-bold rounded-xl cursor-pointer transition-all active:scale-95 shadow-sm shadow-[#2d4a36]/10"
+                  className="flex-1 px-5 py-3.5 bg-[#F7F7F7] hover:bg-[#E0E0E0] text-[#0B0B0B] text-sm font-bold rounded-xl cursor-pointer transition-colors"
                 >
-                  Sahkan Katalog Baru
+                  Commit Catalog
                 </button>
               </div>
             </form>
