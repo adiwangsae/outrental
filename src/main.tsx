@@ -3,7 +3,6 @@ import {createRoot} from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { router } from "./routes";
 import './index.css';
-import './i18n';
 
 // ============================================================================
 // CRITICAL SYSTEMS REVISI: SWALLOW ALL WEBSOCKET & HMR CONFLICT ERRORS
@@ -122,25 +121,25 @@ class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState>
   public render() {
     if (this.state.hasError) {
       return (
-        <div id="fallback-error-boundary-screen" className="min-h-screen flex items-center justify-center bg-black text-white p-6 font-sans antialiased">
-          <div className="max-w-md w-full liquid-glass-card rounded-2xl p-6 lg:p-8 shadow-xl shadow-black/30 text-center space-y-6">
-            <div className="h-12 w-12 rounded-full border border-white/10 text-white/50 flex items-center justify-center mx-auto text-xl font-semibold backdrop-blur-md">
+        <div id="fallback-error-boundary-screen" className="min-h-screen flex items-center justify-center bg-neutral-900 text-neutral-100 p-6 font-sans">
+          <div className="max-w-md w-full bg-neutral-850 border border-neutral-800 rounded-3xl p-8 shadow-2xl text-center space-y-6">
+            <div className="h-12 w-12 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center mx-auto text-xl font-bold">
               !
             </div>
             <div className="space-y-2">
-              <h1 className="text-xl font-semibold tracking-tight text-white">Application Error</h1>
-              <p className="text-sm text-zinc-400 leading-relaxed font-normal">
-                Sistem mendeteksi error tak terduga pada antarmuka pengguna.
+              <h1 className="text-xl font-bold tracking-tight text-white">Oops, Sesuatu Berjalan Kurang Sempurna</h1>
+              <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                Sistem mendeteksi error tak terduga pada interface komponen Anda. Tenang, data sewa outdoor Anda tetap aman.
               </p>
             </div>
-            <div className="p-4 bg-white/5 rounded-xl border border-white/5 max-h-32 overflow-y-auto text-left backdrop-blur-sm">
-              <code className="text-xs text-red-300 font-mono break-all leading-relaxed whitespace-pre-wrap">
+            <div className="p-3 bg-neutral-900 rounded-xl border border-neutral-800/60 max-h-32 overflow-y-auto text-left">
+              <code className="text-[10px] text-red-400 font-mono break-all leading-relaxed whitespace-pre-wrap">
                 {this.state.error?.toString() || "Unknown layout processing error"}
               </code>
             </div>
             <button
               onClick={this.handleReload}
-              className="w-full py-3 rounded-xl btn-primary text-sm font-semibold transition-all duration-300 ease-out cursor-pointer shadow-lg active:scale-95"
+              className="w-full py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-orange-600/10 active:scale-95"
             >
               Muat Ulang Aplikasi
             </button>

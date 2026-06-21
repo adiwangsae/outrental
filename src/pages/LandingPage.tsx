@@ -1,15 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "../store";
-import { ArrowRight, Mountain, ShieldCheck, Clock, Map, Sparkles, Phone, MessageSquare } from "lucide-react";
+import { ArrowRight, Mountain, ShieldCheck, Clock, Map, Sparkles } from "lucide-react";
 import { toast } from "react-toastify";
 import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import InteractiveJourney from "../components/InteractiveJourney";
+import InteractiveSystem from "../components/InteractiveSystem";
 import highAngleForestFog from "../assets/images/high_angle_forest_fog_1780117459264.png";
 import verticalForestSoignes from "../assets/images/vertical_forest_soignes_1780117482844.png";
-import { useTranslation } from "react-i18next";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,35 +17,10 @@ export default function LandingPage() {
   const { user, setAuth } = useStore();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { t } = useTranslation();
   const heroRef = useRef<HTMLDivElement>(null);
   const title1Ref = useRef<HTMLHeadingElement>(null);
   const title2Ref = useRef<HTMLSpanElement>(null);
   const pRef = useRef<HTMLParagraphElement>(null);
-  const [openFAQIndex, setOpenFAQIndex] = useState<number | null>(null);
-
-  const faqItems = [
-    {
-      question: "Bagaimana ketentuan durasi penyewaan di Outrent?",
-      answer: "Durasi penyewaan dihitung presisi per 24 jam sejak saat peralatan Anda serah-terimakan/diambil. Kami menyediakan sistem sewa harian hingga paket jangka panjang untuk memenuhi kebutuhan ekspedisi Anda secara transparan."
-    },
-    {
-      question: "Apakah verifikasi KTP wajib dilakukan, dan mengapa?",
-      answer: "Ya, wajib. Verifikasi Kartu Tanda Penduduk (KTP) wajib dilakukan untuk memvalidasi identitas penyewa, menjaga keutuhan komunitas rental perlengkapan outdoor bernilai tinggi kami, serta memastikan keamanan transaksi bagi kedua belah pihak."
-    },
-    {
-      question: "Bagaimana keamanan dan privasi data KTP saya terjamin?",
-      answer: "Sangat terjamin. Outrent menggunakan enkripsi data terproteksi end-to-end yang aman untuk memproses unggahan tanda pengenal pelanggan. Berkas identitas dienkripsi secara privat dan hanya digunakan untuk keperluan otorisasi kelayakan sewa saja."
-    },
-    {
-      question: "Berapa lama waktu penyelesaian verifikasi KTP/Akun oleh Admin?",
-      answer: "Tim administrasi pemantauan kami beroperasi secara berkala untuk meninjau ajuan Anda secara manual. Proses validasi atau persetujuan KTP umumnya diselesaikan dalam waktu 15 - 30 menit setelah dikirimkan jika gambar terlihat jelas dan valid."
-    },
-    {
-      question: "Apakah saya bisa mengubah jadwal atau memperpanjang masa aktif sewa saat sedang mendaki?",
-      answer: "Ya, perpanjangan sewa dapat diajukan dengan melakukan konfirmasi langsung kepada pihak toko di tempat sebelum batas waktu sewa berakhir, guna memastikan ketersediaan unit dan pembaruan berkas administrasi."
-    }
-  ];
   
   useEffect(() => {
     // Initial GSAP Reveal
@@ -118,7 +93,7 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#070708] text-white font-sans selection:bg-[#E67E22] selection:text-white pb-0 mb-0">
+    <div className="flex flex-col min-h-screen bg-[#0B0B0B] text-[#F7F7F7] font-sans selection:bg-[#FF6600] selection:text-white pb-0 mb-0">
       {/* Header */}
       <motion.header 
         initial={{ y: -80, opacity: 0 }}
@@ -126,7 +101,7 @@ export default function LandingPage() {
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 md:px-8 pointer-events-none"
       >
-        <div className="w-full max-w-6xl pointer-events-auto relative rounded-full bg-black/35 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.16)] flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 h-16 transition-all duration-300 ease-out duration-300 hover:border-white/[0.14] hover:shadow-[0_20px_45px_-5px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.22)] hover:bg-transparent/45 overflow-visible">
+        <div className="w-full max-w-6xl pointer-events-auto relative rounded-full bg-black/35 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.16)] flex items-center justify-between px-6 md:px-10 h-16 transition-all duration-300 hover:border-white/[0.14] hover:shadow-[0_20px_45px_-5px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.22)] hover:bg-[#0B0B0B]/45 overflow-visible">
           
           {/* Liquid Glass Premium Reflection Layer */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/[0.01] via-white/[0.04] to-transparent pointer-events-none" />
@@ -134,118 +109,74 @@ export default function LandingPage() {
 
           <button 
             onClick={() => scrollToSection('hero')} 
-            className="font-semibold text-[15px] sm:text-base md:text-lg lg:text-xl tracking-tight text-white select-none cursor-pointer flex items-center gap-1 hover:opacity-85 transition-opacity relative z-10 shrink-0"
+            className="font-bold text-lg md:text-xl tracking-tight text-white select-none cursor-pointer flex items-center gap-1 hover:opacity-85 transition-opacity relative z-10"
           >
-            OUTRENT<span className="text-[#E67E22]">.</span>
+            OUTRENT<span className="text-[#FF6600]">.</span>
           </button>
           
-          <nav className="hidden md:flex gap-0.5 lg:gap-1.5 items-center relative z-10 mx-auto">
-            <button onClick={() => scrollToSection('story')} className="text-[11px] lg:text-[13px] font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] py-1.5 px-2 md:px-3 lg:px-4 rounded-full transition-all duration-300 ease-out duration-200 cursor-pointer">Filosofi</button>
-            <button onClick={() => scrollToSection('equipment')} className="text-[11px] lg:text-[13px] font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] py-1.5 px-2 md:px-3 lg:px-4 rounded-full transition-all duration-300 ease-out duration-200 cursor-pointer">Eksplorasi</button>
-            <button onClick={() => scrollToSection('journey')} className="text-[11px] lg:text-[13px] font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] py-1.5 px-2 md:px-3 lg:px-4 rounded-full transition-all duration-300 ease-out duration-200 cursor-pointer">Perjalanan</button>
-            <button onClick={() => scrollToSection('system')} className="text-[11px] lg:text-[13px] font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] py-1.5 px-2 md:px-3 lg:px-4 rounded-full transition-all duration-300 ease-out duration-200 cursor-pointer">Sistem</button>
-            <button onClick={() => scrollToSection('faq')} className="text-[11px] lg:text-[13px] font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] py-1.5 px-2 md:px-3 lg:px-4 rounded-full transition-all duration-300 ease-out duration-200 cursor-pointer">FAQ</button>
+          <nav className="hidden md:flex gap-1.5 items-center relative z-10">
+            <button onClick={() => scrollToSection('story')} className="text-[13px] font-medium text-[#BDBDBD] hover:text-white hover:bg-white/[0.06] py-1.5 px-4 rounded-full transition-all duration-200 cursor-pointer">Filosofi</button>
+            <button onClick={() => scrollToSection('equipment')} className="text-[13px] font-medium text-[#BDBDBD] hover:text-white hover:bg-white/[0.06] py-1.5 px-4 rounded-full transition-all duration-200 cursor-pointer">Eksplorasi</button>
+            <button onClick={() => scrollToSection('journey')} className="text-[13px] font-medium text-[#BDBDBD] hover:text-white hover:bg-white/[0.06] py-1.5 px-4 rounded-full transition-all duration-200 cursor-pointer">Perjalanan</button>
+            <button onClick={() => scrollToSection('system')} className="text-[13px] font-medium text-[#BDBDBD] hover:text-white hover:bg-white/[0.06] py-1.5 px-4 rounded-full transition-all duration-200 cursor-pointer">Sistem</button>
           </nav>
           
-          <div className="hidden md:flex gap-2 lg:gap-3 items-center relative z-10 shrink-0">
+          <div className="hidden md:flex gap-3 items-center relative z-10">
             {user ? (
               <button 
                 onClick={() => navigate(user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard')}
-                className="text-[11px] lg:text-sm font-semibold bg-[#E67E22] text-white px-3.5 lg:px-6 h-9 lg:h-10 rounded-full transition-all duration-300 ease-out flex items-center shadow-lg hover:bg-[#CF6E1B] hover:shadow-[#E67E22]/25 hover:-translate-y-0.5 active:translate-y-0 duration-200 cursor-pointer"
+                className="text-sm font-semibold bg-[#FF6600] text-white px-6 h-10 rounded-full transition-all flex items-center shadow-lg hover:bg-[#E55B00] hover:shadow-[#FF6600]/25 hover:-translate-y-0.5 active:translate-y-0 duration-200"
               >
                 Ke Ruang Kerja
               </button>
             ) : (
               <>
-                <button
-                  onClick={() => setMobileMenuOpen(true)}
-                  className="lg:hidden text-[11.5px] font-semibold bg-white text-black hover:bg-white hover:-translate-y-0.5 px-4 h-9 rounded-full flex items-center justify-center transition-all duration-300 ease-out shadow-md duration-200 cursor-pointer"
-                >
-                  Masuk / Daftar
-                </button>
-                <Link to="/login" className="hidden lg:block text-sm font-semibold text-zinc-400 hover:text-white px-4 py-2 transition-colors duration-200">Masuk</Link>
-                <Link to="/register" className="hidden lg:flex text-sm font-semibold bg-white text-black hover:bg-white hover:-translate-y-0.5 px-6 h-10 rounded-full items-center justify-center transition-all duration-300 ease-out shadow-md duration-200">Memulai</Link>
+                <Link to="/login" className="text-sm font-semibold text-[#BDBDBD] hover:text-white px-4 py-2 transition-colors duration-200">Masuk</Link>
+                <Link to="/register" className="text-sm font-semibold bg-[#F7F7F7] text-[#0B0B0B] hover:bg-white hover:-translate-y-0.5 px-6 h-10 rounded-full flex items-center justify-center transition-all shadow-md duration-200">Memulai</Link>
               </>
             )}
           </div>
+          
+          <button 
+            className="md:hidden text-[#BDBDBD] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/5 hover:border-white/12 text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer relative z-10"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? 'Tutup' : 'Menu'}
+          </button>
+          
+          {/* Mobile Menu Dropdown Panel (also inside AnimatePresence so it animates beautifully matching the header) */}
+          <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="md:hidden absolute top-[calc(100%+10px)] left-0 right-0 bg-[#0B0B0C]/92 backdrop-blur-3xl border border-white/[0.08] p-6 rounded-3xl flex flex-col gap-5 shadow-[0_24px_60px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)] z-40 pointer-events-auto"
+            >
+              <button onClick={() => scrollToSection('story')} className="text-[15px] font-medium text-left px-2 text-[#BDBDBD] hover:text-white transition-all">Filosofi</button>
+              <button onClick={() => scrollToSection('equipment')} className="text-[15px] font-medium text-left px-2 text-[#BDBDBD] hover:text-white transition-all">Eksplorasi</button>
+              <button onClick={() => scrollToSection('journey')} className="text-[15px] font-medium text-left px-2 text-[#BDBDBD] hover:text-white transition-all">Perjalanan</button>
+              <button onClick={() => scrollToSection('system')} className="text-[15px] font-medium text-left px-2 text-[#BDBDBD] hover:text-white transition-all">Sistem</button>
+              <div className="h-px w-full bg-white/[0.06]" />
+              {user ? (
+                <button 
+                  onClick={() => navigate(user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard')}
+                  className="w-full text-center text-sm font-semibold bg-[#FF6600] text-white py-3 rounded-full shadow-lg hover:bg-[#E55B00] transition-colors"
+                >
+                  Ke Ruang Kerja
+                </button>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <Link to="/login" className="w-full text-center text-sm font-semibold bg-white/5 border border-white/[0.08] hover:bg-white/10 text-white py-3 rounded-full transition-all">Masuk</Link>
+                  <Link to="/register" className="w-full text-center text-sm font-semibold bg-[#F7F7F7] text-[#0B0B0B] py-3 rounded-full shadow-lg transition-all">Memulai</Link>
+                </div>
+              )}
+            </motion.div>
+          )}
+          </AnimatePresence>
         </div>
       </motion.header>
-
-      {/* iOS-Style Floating Bottom Dock for Mobile */}
-      <div className="md:hidden fixed bottom-8 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-        <div className="pointer-events-auto flex items-center p-1.5 apple-liquid-glass rounded-full relative overflow-visible shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.15)]">
-          {/* Liquid Glass Premium Reflection Layer */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-t from-white/[0.02] to-white/[0.06] pointer-events-none" />
-          <div className="absolute inset-[0.5px] rounded-full border border-white/[0.08] pointer-events-none" />
-          
-          <div className="flex items-center gap-1.5 relative z-10 px-1">
-            <button onClick={() => scrollToSection('story')} className="flex flex-col items-center justify-center w-[4.5rem] py-2.5 px-2 rounded-full text-zinc-300 hover:text-white hover:bg-white/10 transition-all duration-300 ease-out overflow-hidden relative group">
-              <span className="text-[11px] font-semibold tracking-wide z-10">Filosofi</span>
-              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-            </button>
-            <button onClick={() => scrollToSection('equipment')} className="flex flex-col items-center justify-center w-[4.5rem] py-2.5 px-2 rounded-full text-zinc-300 hover:text-white hover:bg-white/10 transition-all duration-300 ease-out overflow-hidden relative group">
-              <span className="text-[11px] font-semibold tracking-wide z-10">Eksplorasi</span>
-              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-            </button>
-            <button onClick={() => scrollToSection('journey')} className="flex flex-col items-center justify-center w-[4.5rem] py-2.5 px-2 rounded-full text-zinc-300 hover:text-white hover:bg-white/10 transition-all duration-300 ease-out overflow-hidden relative group">
-              <span className="text-[11px] font-semibold tracking-wide z-10">Perjalanan</span>
-              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
-            </button>
-            
-            <div className="w-[1px] h-7 bg-white/[0.12] mx-1" />
-            
-            {user ? (
-              <button 
-                onClick={() => navigate(user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard')}
-                className="flex items-center justify-center w-[4.5rem] h-9 rounded-full bg-[#E67E22]/90 backdrop-blur-md border border-[#E67E22]/50 text-white text-[11px] font-bold hover:bg-[#E67E22] transition-colors shadow-[0_0_20px_rgba(230,126,34,0.4)] mx-1 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <span className="relative z-10">Ruang</span>
-              </button>
-            ) : (
-              <button 
-                onClick={() => setMobileMenuOpen(true)}
-                className="flex items-center justify-center w-[4.5rem] h-9 rounded-full bg-white/10 backdrop-blur-md text-white text-[11px] font-bold hover:bg-white/20 transition-all shadow-[0_8px_16px_rgba(0,0,0,0.4),0_0_20px_rgba(255,255,255,0.05)] mx-1 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
-                <span className="relative z-10">Masuk</span>
-              </button>
-            )}
-           </div>
-        </div>
-      </div>
-
-      {/* Auth Modal for Mobile */}
-      <AnimatePresence>
-        {mobileMenuOpen && !user && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center bg-black/60 backdrop-blur-sm p-4"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 100, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 100, scale: 0.95 }}
-              transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
-              className="w-full max-w-sm bg-[#0B0B0C] border border-white/[0.08] rounded-2xl p-6 shadow-xl shadow-black/30 relative"
-            >
-              <button 
-                onClick={() => setMobileMenuOpen(false)}
-                className="absolute top-4 right-4 text-zinc-400 hover:text-white p-2"
-              >
-                Tutup
-              </button>
-              <h3 className="text-xl font-semibold mb-6">Mulai Eksplorasi</h3>
-              <div className="flex flex-col gap-3">
-                <Link to="/login" className="w-full text-center text-sm font-semibold bg-white/5 border border-white/[0.08] hover:bg-white/10 text-white py-3.5 rounded-full transition-all duration-300 ease-out">Masuk Akun</Link>
-                <Link to="/register" className="w-full text-center text-sm font-semibold bg-white text-black py-3.5 rounded-full shadow-lg transition-all duration-300 ease-out">Buat Akun Baru</Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <main className="flex-1 w-full flex flex-col items-center">
         
@@ -269,9 +200,9 @@ export default function LandingPage() {
             />
 
             {/* Glowing Sunset/Sunrise Horizon Sun-glow (Radial Gradients for Depth) */}
-            <div className="absolute bottom-[20%] md:bottom-[25%] left-1/2 -translate-x-1/2 w-[160%] sm:w-[120%] lg:w-[100%] aspect-square rounded-full bg-[radial-gradient(circle_at_center,rgba(230,126,34,0.12)_0%,rgba(180,83,9,0.03)_50%,transparent_100%)] blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[20%] md:bottom-[25%] left-1/2 -translate-x-1/2 w-[160%] sm:w-[120%] lg:w-[100%] aspect-square rounded-full bg-[radial-gradient(circle_at_center,rgba(255,102,0,0.12)_0%,rgba(180,83,9,0.03)_50%,transparent_100%)] blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[120%] sm:w-[80%] aspect-video rounded-full bg-[radial-gradient(ellipse_at_center,rgba(251,146,60,0.06)_0%,transparent_70%)] blur-[90px] pointer-events-none" />
-            <div className="absolute top-[10%] right-[10%] w-[350px] h-[350px] rounded-full bg-gradient-to-br from-[#E67E22]/10 to-transparent blur-[140px] pointer-events-none" />
+            <div className="absolute top-[10%] right-[10%] w-[350px] h-[350px] rounded-full bg-gradient-to-br from-[#FF6600]/10 to-transparent blur-[140px] pointer-events-none" />
 
             {/* Dynamic Interactive Ambient Floating Sparks/Embers */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -283,7 +214,7 @@ export default function LandingPage() {
                 return (
                   <motion.div
                     key={i}
-                    className="absolute rounded-full bg-[radial-gradient(circle_at_center,rgba(230,126,34,0.45)_0%,rgba(230,126,34,0.05)_70%,transparent_100%)] filter blur-[1px]"
+                    className="absolute rounded-full bg-[radial-gradient(circle_at_center,rgba(255,102,0,0.45)_0%,rgba(255,85,0,0.05)_70%,transparent_100%)] filter blur-[1px]"
                     style={{
                       width: size * 3,
                       height: size * 3,
@@ -323,16 +254,16 @@ export default function LandingPage() {
             />
           </div>
           
-          <div ref={heroRef} className="max-w-4xl mx-auto z-10 flex flex-col items-center text-center px-8 sm:px-12 md:px-16 mt-4 md:mt-0">
-            <h1 className="text-[44px] sm:text-[60px] md:text-[76px] lg:text-[84px] leading-[1.08] font-semibold tracking-[-0.03em] text-white mb-8" style={{ opacity: 0 }} ref={title1Ref as any}>
+          <div ref={heroRef} className="max-w-[1000px] mx-auto text-center z-10 flex flex-col items-center mt-4 md:mt-0">
+            <h1 className="text-[48px] sm:text-[64px] md:text-[88px] leading-[1.05] font-bold tracking-[-0.03em] text-[#F7F7F7] mb-8" style={{ opacity: 0 }} ref={title1Ref as any}>
               Persiapan yang Tepat Membentuk <br className="hidden md:block"/>
-              <span className="text-white/60" ref={title2Ref as any}>Perjalanan yang Berkesan.</span>
+              <span className="text-white/70" ref={title2Ref as any}>Perjalanan yang Berkesan.</span>
             </h1>
             
             <p 
               ref={pRef}
               style={{ opacity: 0 }}
-              className="text-[16px] md:text-[20px] text-zinc-400 max-w-[640px] mb-10 font-light leading-[1.6]"
+              className="text-[16px] md:text-[22px] text-[#BDBDBD] max-w-[720px] mb-8 font-light leading-[1.6]"
             >
               Kelola perlengkapan, pantau penyewaan, dan layani pelanggan dengan lebih mudah melalui satu platform rental outdoor yang praktis dan profesional.
             </p>
@@ -353,22 +284,22 @@ export default function LandingPage() {
         </section>
 
         {/* SCENE 2 - STORY */}
-        <section id="story" className="py-[120px] md:py-[160px] bg-[#070708] w-full relative z-10">
-          <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16 flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+        <section id="story" className="py-[120px] md:py-[180px] px-6 bg-gradient-to-b from-[#070708] to-[#0D1016] w-full max-w-[1440px]">
+          <div className="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-[120px]">
              <div className="flex-1 flex flex-col gap-6">
                <RevealText yOffset={60}>
-                 <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase">FILOSOFI KESIAPAN</span>
-                 <h2 className="text-[32px] md:text-[44px] lg:text-[48px] font-extrabold tracking-tight leading-[1.15] mb-2 mt-1">
+                 <span className="text-xs font-mono text-[#FF6600] tracking-widest uppercase">FILOSOFI KESIAPAN</span>
+                 <h2 className="text-[36px] md:text-[56px] font-extrabold tracking-tight leading-[1.1] mb-2 mt-1">
                    Alam tidak menoleransi <br className="hidden md:block" /> <span className="text-white font-black">ketidaksiapan.</span>
                  </h2>
                </RevealText>
                <RevealText delay={0.2} yOffset={40}>
-                 <p className="text-[16px] md:text-[18px] text-zinc-400 leading-[1.7] font-light max-w-[480px]">
+                 <p className="text-[18px] md:text-[22px] text-[#BDBDBD] leading-[1.7] font-light max-w-[500px]">
                    Perjalanan yang hebat dimulai jauh sebelum langkah pertama di jalur pendakian. Diawali dari peralatan yang tepat, terawat, dan terjamin keberadaannya.
                  </p>
                </RevealText>
                <RevealText delay={0.3} yOffset={40}>
-                 <p className="text-[16px] md:text-[18px] text-zinc-400 leading-[1.7] font-light max-w-[480px]">
+                 <p className="text-[18px] md:text-[22px] text-[#BDBDBD] leading-[1.7] font-light max-w-[500px]">
                    Outrent memastikan setiap perlengkapan selalu dalam kondisi prima sebelum diserahkan kepada Anda.
                  </p>
                </RevealText>
@@ -379,7 +310,7 @@ export default function LandingPage() {
                whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                viewport={{ once: true, margin: "-100px" }}
                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-               className="flex-1 w-full aspect-square md:aspect-[4/5] liquid-glass-card rounded-2xl overflow-hidden relative border border-white/5 shadow-xl shadow-black/30 liquid-glass-card"
+               className="flex-1 w-full aspect-square md:aspect-[4/5] bg-[#151515] rounded-3xl overflow-hidden relative border border-white/5 shadow-2xl liquid-glass-card"
              >
                 <motion.img 
                   src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop"
@@ -393,13 +324,13 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#070708]/80 via-transparent to-transparent opacity-80" />
                 
                 {/* Floating Glassmorphic Status Indicator Card overlay */}
-                <div className="absolute bottom-8 right-8 left-8 p-6 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/5 flex items-center gap-4 z-10 shadow-xl shadow-black/30 liquid-glass-card">
-                  <div className="w-10 h-10 rounded-full bg-[#E67E22]/20 flex items-center justify-center text-[#E67E22]">
+                <div className="absolute bottom-8 right-8 left-8 p-6 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 z-10 shadow-2xl liquid-glass-card">
+                  <div className="w-10 h-10 rounded-full bg-[#FF6600]/20 flex items-center justify-center text-[#FF6600]">
                     <ShieldCheck size={20} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-mono uppercase tracking-wider font-semibold">Standard Laboratorium</div>
-                    <div className="text-zinc-400 text-xs">Uji sterilisasi, kalibrasi presisi, & verifikasi orisinalitas gear.</div>
+                    <div className="text-white text-xs font-mono uppercase tracking-wider font-bold">Standard Laboratorium</div>
+                    <div className="text-[#BDBDBD] text-xs">Uji sterilisasi, kalibrasi presisi, & verifikasi orisinalitas gear.</div>
                   </div>
                 </div>
              </motion.div>
@@ -407,21 +338,21 @@ export default function LandingPage() {
         </section>
 
         {/* SCENE 3 - EQUIPMENT */}
-        <section id="equipment" className="py-[120px] md:py-[160px] w-full bg-[#070708] overflow-hidden relative z-10">
-          <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16 w-full">
+        <section id="equipment" className="py-[120px] md:py-[180px] px-6 w-full bg-gradient-to-b from-[#0D1016] to-[#08090C] overflow-hidden">
+          <div className="max-w-[1440px] mx-auto w-full">
             <RevealText yOffset={50}>
               <div className="flex flex-col items-center">
-                <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase mb-2">SELEKSI EKSTRA</span>
-                <h2 className="text-[32px] md:text-[44px] lg:text-[48px] font-extrabold tracking-tight mb-6 text-center text-white">Instrumen Penjelajahan.</h2>
+                <span className="text-xs font-mono text-[#FF6600] tracking-widest uppercase mb-2">SELEKSI EKSTRA</span>
+                <h2 className="text-[36px] md:text-[56px] font-black tracking-tight mb-6 text-center text-white">Instrumen Penjelajahan.</h2>
               </div>
             </RevealText>
             <RevealText delay={0.1}>
-              <p className="text-[16px] md:text-[18px] text-zinc-400 text-center max-w-[580px] mx-auto mb-[60px] font-light leading-[1.6]">
+              <p className="text-[18px] md:text-[22px] text-[#BDBDBD] text-center max-w-[680px] mx-auto mb-[80px] font-light leading-[1.6]">
                 Standar pengerjaan tinggi. Setiap unit diseleksi, dirawat, dan dikalibrasi ulang usai penggunaan.
               </p>
             </RevealText>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-12 w-full max-w-[1240px] mx-auto">
                {[
                  { 
                    title: "Shelter & Tenda", 
@@ -461,23 +392,23 @@ export default function LandingPage() {
                    viewport={{ once: true, margin: "-50px" }}
                    transition={{ duration: 1.2, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
                    whileHover={{ y: -8, scale: 1.02 }}
-                   className="rounded-[40px] h-[520px] flex flex-col justify-end group transition-all duration-300 ease-out border border-white/5 relative overflow-hidden shadow-xl shadow-black/30"
+                   className="rounded-[40px] h-[520px] flex flex-col justify-end group transition-all border border-white/5 relative overflow-hidden shadow-2xl"
                  >
                     {/* High Quality Gear Aspect Image */}
                     <img 
                       src={item.img} 
                       alt={item.title} 
-                      className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-65 group- transition-all duration-300 ease-out duration-700 pointer-events-none"
+                      className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-65 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent pointer-events-none" />
                     
                     <div className="relative z-10 flex flex-col p-10 pb-8">
-                      <div className="w-12 h-12 rounded-full border border-white/5 flex items-center justify-center mb-6 bg-black/40 backdrop-blur-md group-hover:bg-white group-hover:text-black transition-all duration-300 ease-out duration-500 ease-out">
+                      <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-6 bg-black/40 backdrop-blur-md group-hover:bg-white group-hover:text-black transition-all duration-500 ease-out">
                         <ArrowRight size={20} className="transform group-hover:rotate-[-45deg] transition-transform duration-500" />
                       </div>
                       <h3 className="text-[26px] font-semibold text-white mb-3 tracking-tight">{item.title}</h3>
-                      <p className="text-[14px] text-zinc-400 font-light leading-[1.6]">{item.desc}</p>
+                      <p className="text-[14px] text-[#BDBDBD] font-light leading-[1.6]">{item.desc}</p>
                     </div>
                  </motion.div>
                ))}
@@ -486,12 +417,12 @@ export default function LandingPage() {
         </section>
 
         {/* SCENE 4 - BOOKING JOURNEY */}
-        <section id="journey" className="py-[120px] md:py-[160px] bg-[#070708] w-full relative z-10">
-          <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16">
+        <section id="journey" className="py-[120px] md:py-[180px] px-6 bg-gradient-to-b from-[#08090C] to-[#0C0C0E] w-full">
+          <div className="max-w-[1240px] mx-auto">
             <RevealText yOffset={50}>
                <div className="flex flex-col items-start mb-16">
-                 <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase">FLOW OPERASI</span>
-                 <h2 className="text-[32px] md:text-[44px] lg:text-[48px] font-extrabold tracking-tight mt-1 leading-[1.15] text-white">Proses yang Sunyi.</h2>
+                 <span className="text-xs font-mono text-[#FF6600] tracking-widest uppercase">FLOW OPERASI</span>
+                 <h2 className="text-[36px] md:text-[56px] font-black tracking-tight mt-1 leading-[1.1] text-white">Proses yang Sunyi.</h2>
                </div>
             </RevealText>
             
@@ -501,7 +432,7 @@ export default function LandingPage() {
         </section>
 
         {/* SCENE 5 & 6 - SYSTEM REVEAL / OPERATIONAL EXCELLENCE */}
-        <section id="system" className="py-[120px] md:py-[160px] bg-[#070708] w-full overflow-hidden relative z-10">
+        <section id="system" className="py-[120px] md:py-[180px] px-6 bg-[#0C0C0E] w-full overflow-hidden relative">
           {/* Immersive Dark Misty Landscape Background image for Majestik Dashboard system section from Bruxelles Forêt de Soignes */}
           <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
             <img 
@@ -511,25 +442,25 @@ export default function LandingPage() {
               referrerPolicy="no-referrer"
             />
             {/* Blends smoothly with sections before and after */}
-            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#070708] via-[#070708]/80 to-transparent pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#070708] via-[#070708]/80 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#0C0C0E] via-[#0C0C0E]/80 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0C0C0E] via-[#0C0C0E]/80 to-transparent pointer-events-none" />
             {/* Soft Ambient Radial Lights */}
-            <div className="absolute top-[20%] left-[10%] w-[450px] h-[450px] rounded-full bg-[#E67E22]/5 blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[30%] right-[10%] w-[500px] h-[500px] rounded-full bg-[#E67E22]/5 blur-[150px] pointer-events-none" />
+            <div className="absolute top-[20%] left-[10%] w-[450px] h-[450px] rounded-full bg-[#FF6600]/5 blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[30%] right-[10%] w-[500px] h-[500px] rounded-full bg-orange-500/5 blur-[150px] pointer-events-none" />
           </div>
 
-          <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16 w-full relative z-10">
-            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          <div className="max-w-[1240px] mx-auto w-full relative z-10">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 gap-16 lg:gap-[120px] items-center mb-16">
               
               <div className="lg:col-span-4 flex flex-col gap-6">
                  <RevealText yOffset={50}>
-                   <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase">MAJESTIK DASHBOARD</span>
-                   <h2 className="text-[32px] md:text-[40px] lg:text-[44px] font-extrabold tracking-tight mt-1 leading-[1.15] text-white">
+                   <span className="text-xs font-mono text-[#FF6600] tracking-widest uppercase">MAJESTIK DASHBOARD</span>
+                   <h2 className="text-[36px] md:text-[48px] font-black tracking-tight mt-1 leading-[1.15] text-white">
                      Di balik visual yang tenang, terdapat orkestrasi yang kokoh.
                    </h2>
                  </RevealText>
                  <RevealText delay={0.2} yOffset={40}>
-                   <p className="text-[16px] md:text-[18px] text-zinc-400 font-light leading-[1.7]">
+                   <p className="text-[16px] md:text-[18px] text-[#BDBDBD] font-light leading-[1.7]">
                      Outrent bukan sekadar katalog digital. Ini adalah infrastruktur utuh yang melacak perawatan armada peralatan, memvalidasi integritas penyewa, hingga mengolah data laporan finansial secara holistik.
                    </p>
                  </RevealText>
@@ -537,154 +468,73 @@ export default function LandingPage() {
 
               <div className="lg:col-span-8 flex flex-col gap-6">
                  <RevealText delay={0.3} yOffset={40}>
-                   <p className="text-[16px] md:text-[18px] text-zinc-400 font-light leading-[1.7] max-w-[650px]">
+                   <p className="text-[16px] md:text-[18px] text-[#BDBDBD] font-light leading-[1.7] max-w-[650px]">
                      Setiap modul dirancang untuk satu tujuan: Membiarkan Anda fokus pada eksplorasi, sementara sistem pintar kami mengurus kompleksitas validasi biometrik dan kelayakan logistik di lapangan.
                    </p>
                  </RevealText>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* SCENE 6.5 - FAQ ACCORDION */}
-        <section id="faq" className="py-[120px] md:py-[160px] bg-[#070708] w-full relative z-10">
-          <div className="max-w-4xl mx-auto px-8 sm:px-12 md:px-16 w-full">
-            <RevealText yOffset={50}>
-              <div className="flex flex-col items-center mb-16 text-center">
-                <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase mb-2">PERTANYAAN UMUM</span>
-                <h2 className="text-[32px] md:text-[44px] lg:text-[48px] font-extrabold tracking-tight mb-4 text-white">FAQ & Kepercayaan Pelanggan</h2>
-                <p className="text-[16px] md:text-[18px] text-zinc-400 max-w-[580px] font-light leading-[1.6]">
-                  Semua hal penting mengenai verifikasi KTP, penanganan data privasi, dan ketentuan durasi sewa peralatan outdoor kami.
-                </p>
+            {/* Immersive MacBook Laptop mockup frame wrapper around the InteractiveSystem panel */}
+            <div className="w-full max-w-[1240px] mx-auto mt-12 relative">
+              {/* Laptop screen bevel / border */}
+              <div className="bg-[#0D0D11] rounded-t-3xl border-t border-x border-white/10 p-2 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative z-10">
+                {/* Embedded Web Camera at top center of display bezel */}
+                <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-neutral-900 border border-white/15" />
+                
+                {/* The display screen content wrapper */}
+                <div className="bg-[#0F0F10] rounded-2xl overflow-hidden border border-white/5">
+                  <InteractiveSystem />
+                </div>
               </div>
-            </RevealText>
 
-            <div className="flex flex-col gap-4 max-w-3xl mx-auto">
-              {faqItems.map((item, index) => {
-                const isOpen = openFAQIndex === index;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className="rounded-3xl border border-white/5 bg-[#121214]/40 hover:bg-[#121214]/60 overflow-hidden transition-colors"
-                  >
-                    <button
-                      onClick={() => setOpenFAQIndex(isOpen ? null : index)}
-                      className="w-full text-left p-6 md:p-8 flex items-center justify-between gap-6 cursor-pointer"
-                    >
-                      <span className="text-base md:text-lg font-medium text-white hover:text-[#E67E22] transition-colors font-sans">
-                        {item.question}
-                      </span>
-                      <div className={`w-8 h-8 rounded-full border border-white/10 flex items-center justify-center bg-black/40 text-zinc-400 shrink-0 transform transition-all duration-300 ${isOpen ? 'rotate-180 text-[#E67E22] border-[#E67E22]/30' : ''}`}>
-                        <ArrowRight size={16} className="-rotate-90" />
-                      </div>
-                    </button>
-                    
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-6 md:px-8 pb-6 md:pb-8 text-sm md:text-base text-zinc-400 font-light leading-[1.7] border-t border-white/[0.03] pt-4 font-sans">
-                            {item.answer}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
+              {/* Solid aluminum laptop base frame chassis */}
+              <div className="h-3.5 sm:h-5 bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-800 rounded-b-2xl border-t border-white/20 relative shadow-[0_25px_60px_-10px_rgba(0,0,0,0.9)] z-20">
+                {/* Finger-grip groove for display opening */}
+                <div className="w-16 sm:w-28 h-1 bg-neutral-900 mx-auto rounded-b absolute top-0 left-1/2 -translate-x-1/2" />
+              </div>
             </div>
-
-            {/* Call Center Block */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="mt-16 p-8 md:p-10 rounded-3xl border border-[#E67E22]/20 bg-gradient-to-r from-[#121214]/60 to-[#18181A]/60 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#E67E22]/10 flex items-center justify-center text-[#E67E22] shrink-0 mt-1">
-                  <Phone size={22} />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-lg font-bold text-white mb-1">Butuh Bantuan Lain?</h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed font-light">
-                    Ketahui alur penyewaan lebih lanjut atau hubungi kami untuk mendiskusikan kebutuhan ekspedisi khusus Anda di luar FAQ di atas.
-                  </p>
-                  <div className="mt-2 text-xs text-zinc-500 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
-                    <span>Layanan Aktif: Setiap Hari 08:00 - 22:00 WIB</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 justify-center">
-                <a
-                  href="tel:+6285236826505"
-                  className="flex items-center justify-center gap-2 border border-white/10 hover:border-white/25 text-xs font-semibold uppercase tracking-widest text-zinc-300 hover:text-white px-5 py-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] transition-all cursor-pointer text-center"
-                >
-                  <Phone size={14} /> Telepon
-                </a>
-                <a
-                  href="https://wa.me/6285236826505"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-[#E67E22] hover:bg-[#D35400] text-xs font-bold uppercase tracking-widest text-white px-5 py-3 rounded-2xl transition-all shadow-[0_4px_12px_rgba(230,126,34,0.3)] hover:shadow-[0_6px_20px_rgba(230,126,34,0.4)] cursor-pointer text-center"
-                >
-                  <MessageSquare size={14} /> Chat WA
-                </a>
-              </div>
-            </motion.div>
           </div>
         </section>
 
         {/* SCENE 7 - DEMO CTA */}
-        <section id="demo-cta" className="py-[120px] md:py-[160px] bg-[#070708] w-full text-center relative overflow-hidden z-10">
+        <section id="demo-cta" className="py-[120px] md:py-[180px] px-6 bg-gradient-to-b from-[#0C0C0E] to-[#070708] w-full text-center relative overflow-hidden border-t border-white/5">
            <div className="absolute inset-0 flex items-center justify-center opacity-[0.12] pointer-events-none blur-[120px]">
-              <div className="w-[600px] h-[400px] bg-[#E67E22] rounded-full" />
+              <div className="w-[600px] h-[400px] bg-[#FF7A00] rounded-full" />
            </div>
 
-           <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16 relative z-10">
+           <div className="max-w-[1240px] mx-auto relative z-10">
               <RevealText yOffset={60}>
-                <span className="text-xs font-mono text-[#E67E22] tracking-widest uppercase">COBA SIMULASI</span>
-                <h2 className="text-[40px] md:text-[64px] lg:text-[76px] font-extrabold tracking-tight mb-6 mt-1 leading-none text-white">Alami Sendiri.</h2>
+                <span className="text-xs font-mono text-[#FF6600] tracking-widest uppercase">COBA SIMULASI</span>
+                <h2 className="text-[48px] md:text-[80px] font-black tracking-tight mb-6 mt-1 leading-none text-white">Alami Sendiri.</h2>
               </RevealText>
               <RevealText delay={0.1} yOffset={40}>
-                <p className="text-[16px] md:text-[18px] text-zinc-400 max-w-[540px] mx-auto font-light leading-[1.6] mb-10">
+                <p className="text-[20px] md:text-[24px] text-[#BDBDBD] max-w-[640px] mx-auto font-light leading-[1.6] mb-12">
                   Jelajahi ekosistem melalui simulasi yang aman. Pilih perspektif untuk memulai perjalanan.
                 </p>
               </RevealText>
               
               {/* Premium Role Selective Link Cards with rich Unsplash background imagery */}
               <RevealText delay={0.2} yOffset={40}>
-                <div className="flex flex-col sm:flex-row justify-center gap-6 w-full max-w-3xl mx-auto mt-6">
+                <div className="flex flex-col sm:flex-row justify-center gap-8 max-w-[960px] mx-auto">
                   <motion.button 
                     whileHover={{ scale: 1.02, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleDemoLogin('customer')}
-                    className="flex-1 min-h-[300px] rounded-[40px] transition-all duration-300 ease-out cursor-pointer group border border-white/5 hover:border-white/5 relative overflow-hidden shadow-xl shadow-black/30 text-left flex flex-col justify-end p-6 lg:p-8 sm:p-10"
+                    className="flex-1 min-h-[300px] rounded-[40px] transition-all cursor-pointer group border border-white/5 hover:border-white/10 relative overflow-hidden shadow-2xl text-left flex flex-col justify-end p-8 sm:p-10"
                   >
                     <img 
                       src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop"
                       alt="Enchanting hikers path through green forest canopy"
-                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-50 transition-all duration-300 ease-out pointer-events-none"
+                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
                     
                     <div className="relative z-10 space-y-2">
-                      <span className="text-[10px] font-mono tracking-widest text-[#E67E22] font-semibold uppercase">AKSES INSTAN PELANGGAN</span>
-                      <h3 className="text-2xl sm:text-3xl font-semibold text-white group-hover:text-[#E67E22] transition-colors leading-tight">Mulai Eksplorasi</h3>
-                      <p className="text-sm text-zinc-400 font-light">Mencoba memilih peralatan, hitung berat, & lakukan simulasi booking virtual.</p>
+                      <span className="text-[10px] font-mono tracking-widest text-[#FF7A00] font-bold uppercase">AKSES INSTAN PELANGGAN</span>
+                      <h3 className="text-2xl sm:text-3xl font-bold text-white group-hover:text-[#FF7A00] transition-colors leading-tight">Mulai Eksplorasi</h3>
+                      <p className="text-sm text-[#BDBDBD] font-light">Mencoba memilih peralatan, hitung berat, & lakukan simulasi booking virtual.</p>
                     </div>
                   </motion.button>
                   
@@ -692,38 +542,37 @@ export default function LandingPage() {
                     whileHover={{ scale: 1.02, y: -6 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleDemoLogin('admin')}
-                    className="flex-1 min-h-[300px] rounded-[40px] transition-all duration-300 ease-out cursor-pointer group border border-white/5 hover:border-white/5 relative overflow-hidden shadow-xl shadow-black/30 text-left flex flex-col justify-end p-6 lg:p-8 sm:p-10"
+                    className="flex-1 min-h-[300px] rounded-[40px] transition-all cursor-pointer group border border-white/5 hover:border-white/10 relative overflow-hidden shadow-2xl text-left flex flex-col justify-end p-8 sm:p-10"
                   >
                     <img 
                       src="https://images.unsplash.com/photo-1517824806704-9040b037703b?q=80&w=800&auto=format&fit=crop"
                       alt="Cosmic sky aurora mountain campsite hub"
-                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-50 transition-all duration-300 ease-out pointer-events-none"
+                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
                     
                     <div className="relative z-10 space-y-2">
-                      <span className="text-[10px] font-mono tracking-widest text-[#E67E22] font-semibold uppercase">PERSPEKTIF OPERATOR</span>
-                      <h3 className="text-2xl sm:text-3xl font-semibold text-white group-hover:text-[#E67E22] transition-colors leading-tight">Kelola Armada</h3>
-                      <p className="text-sm text-zinc-400 font-light">Simulasikan validasi KTP, pantau armada logistik, & kelola dashboard admin.</p>
+                      <span className="text-[10px] font-mono tracking-widest text-[#FF7A00] font-bold uppercase">PERSPEKTIF OPERATOR</span>
+                      <h3 className="text-2xl sm:text-3xl font-bold text-white group-hover:text-[#FF7A00] transition-colors leading-tight">Kelola Armada</h3>
+                      <p className="text-sm text-[#BDBDBD] font-light">Simulasikan validasi KTP, pantau armada logistik, & kelola dashboard admin.</p>
                     </div>
                   </motion.button>
                 </div>
               </RevealText>
            </div>
          </section>
-
        </main>
 
-       <footer className="w-full bg-[#070708] pt-16 pb-32 md:pb-12 relative z-10 mt-auto">
-          <div className="max-w-5xl mx-auto px-8 sm:px-12 md:px-16 flex flex-col items-center text-center">
-             <h2 className="text-2xl font-semibold tracking-tight mb-8 text-white">OUTRENT.</h2>
-             <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mb-10 text-center">
-                <Link to="/about" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Tentang Kami</Link>
-                <Link to="/terms" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Syarat & Ketentuan</Link>
+       <footer className="w-full bg-[#070708] pt-[80px] pb-[40px] px-6 relative z-10 mt-auto border-t border-white/5">
+          <div className="max-w-[1440px] mx-auto flex flex-col items-center text-center">
+             <h2 className="text-[24px] font-bold tracking-tight mb-[40px] text-white">OUTRENT.</h2>
+             <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mb-[60px] text-center">
+                <Link to="/about" className="text-[14px] font-medium text-[#BDBDBD] hover:text-[#FF6600] transition-colors">Tentang Kami</Link>
+                <Link to="/terms" className="text-[14px] font-medium text-[#BDBDBD] hover:text-[#FF6600] transition-colors">Syarat & Ketentuan</Link>
              </div>
-             <div className="text-[11px] sm:text-xs text-zinc-500 font-light tracking-wide uppercase text-center px-4">
-                &copy; 2026 Outrent Digital Platform.<br className="block sm:hidden" /> <span className="hidden sm:inline"></span>Hak Cipta Dilindungi.
+             <div className="text-[12px] text-[#BDBDBD]/60 font-light tracking-wide uppercase text-center px-4">
+                &copy; 2026 Outrent Digital Platform. Hak Cipta Dilindungi.
              </div>
           </div>
        </footer>

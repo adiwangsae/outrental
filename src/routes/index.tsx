@@ -32,7 +32,6 @@ export const router = createBrowserRouter([
           { path: "catalog", element: <CatalogPage /> },
           { path: "checkout", element: <CartCheckoutPage /> },
           { path: "bookings", element: <BookingHistoryPage /> },
-          { path: "profile", element: <CustomerDashboard /> },
         ]
       },
       {
@@ -41,7 +40,6 @@ export const router = createBrowserRouter([
         children: [
           { path: "", element: <Navigate to="dashboard" replace /> },
           { path: "dashboard", element: <AdminDashboard /> },
-          { path: "*", element: <Navigate to="dashboard" replace /> },
         ]
       }
     ]
