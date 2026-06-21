@@ -105,16 +105,16 @@ export default function InteractiveJourney() {
               key={idx}
               id={`journey-step-btn-${idx}`}
               onClick={() => setActiveStep(idx)}
-              className={`flex flex-col sm:flex-row items-center sm:items-start gap-1 sm:gap-4 p-2 xs:p-3 sm:p-5 rounded-xl xs:rounded-2xl sm:rounded-3xl border transition-all text-center sm:text-left group relative cursor-pointer ${
+              className={`flex flex-col sm:flex-row items-center sm:items-start gap-1 sm:gap-4 p-2 xs:p-3 sm:p-5 rounded-xl xs:rounded-2xl sm:rounded-2xl border transition-all duration-300 ease-out text-center sm:text-left group relative cursor-pointer ${
                 isActive
-                  ? "bg-white/5 border-[#FF6600]/30 shadow-[0_4px_24px_rgba(255,102,0,0.1)]"
-                  : "bg-transparent border-white/5 hover:border-white/10 hover:bg-white/[0.02]"
+                  ? "bg-white/5 border-[#E67E22]/30 shadow-[0_4px_24px_rgba(230,126,34,0.1)]"
+                  : "bg-transparent border-white/5 hover:border-white/5 hover:bg-white/[0.02]"
               }`}
             >
               <div
-                className={`w-7 h-7 xs:w-9 xs:h-9 sm:w-14 sm:h-14 rounded-lg xs:rounded-xl sm:rounded-2xl flex items-center justify-center transition-all shrink-0 ${
+                className={`w-7 h-7 xs:w-9 xs:h-9 sm:w-14 sm:h-14 rounded-xl xs:rounded-xl sm:rounded-2xl flex items-center justify-center transition-all duration-300 ease-out shrink-0 ${
                   isActive
-                    ? "bg-[#FF6600] text-white shadow-lg shadow-[#FF6600]/20"
+                    ? "bg-[#E67E22] text-white shadow-lg shadow-[#E67E22]/20"
                     : "bg-[#1A1A1A] text-white/50 group-hover:text-white"
                 }`}
               >
@@ -122,7 +122,7 @@ export default function InteractiveJourney() {
                 {React.cloneElement(s.icon, { size: window.innerWidth < 640 ? 14 : 20 })}
               </div>
               <div className="flex-1 min-w-0 w-full">
-                <span className={`text-[8px] xs:text-[10px] sm:text-[12px] font-mono uppercase tracking-wider block mb-0.5 sm:mb-1 ${isActive ? "text-[#FF6600]" : "text-white/40"}`}>
+                <span className={`text-[8px] xs:text-[10px] sm:text-[12px] font-mono uppercase tracking-wider block mb-0.5 sm:mb-1 ${isActive ? "text-[#E67E22]" : "text-white/40"}`}>
                   {s.label}
                 </span>
                 <span className="text-[9px] xs:text-[11px] font-medium text-white/70 block sm:hidden uppercase tracking-tight truncate w-full">
@@ -136,8 +136,8 @@ export default function InteractiveJourney() {
       </div>
 
       {/* Simulator Sandbox */}
-      <div className="bg-[#121212] border border-white/5 rounded-[32px] sm:rounded-[40px] p-4 sm:p-10 relative overflow-hidden backdrop-blur-xl shadow-2xl">
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#FF6600]/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="bg-[#121212] border border-white/5 rounded-[32px] sm:rounded-[40px] p-4 sm:p-10 relative overflow-hidden backdrop-blur-xl shadow-xl shadow-black/30">
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#E67E22]/5 rounded-full blur-[100px] pointer-events-none" />
 
         <AnimatePresence mode="wait">
           {activeStep === 0 && (
@@ -147,14 +147,14 @@ export default function InteractiveJourney() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:p-8"
               id="playground-pemilihan"
             >
               {/* Gear Selection Left */}
               <div className="lg:col-span-7 flex flex-col gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-2">
                   <h3 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-                    <Sparkles className="text-[#FF6600] w-5 h-5 animate-pulse" />
+                    <Sparkles className="text-[#E67E22] w-5 h-5 animate-pulse" />
                     Katalog Gear Adaptif
                   </h3>
                   <span className="text-[10px] sm:text-xs font-mono text-white/40">KLIK UNTUK MEMILIH / TAMBAH</span>
@@ -172,17 +172,17 @@ export default function InteractiveJourney() {
                       <div
                         key={item.id}
                         onClick={() => !isSelected && toggleItem(item.id)}
-                        className={`p-3 sm:p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 cursor-pointer ${
+                        className={`p-3 sm:p-4 rounded-2xl border transition-all duration-300 ease-out flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 cursor-pointer ${
                           isSelected
-                            ? "bg-white/5 border-[#FF6600]/25 shadow-[0_0_15px_rgba(255,102,0,0.05)]"
-                            : "bg-[#181818]/60 border-white/5 hover:border-white/10 hover:bg-[#1C1C1C]"
+                            ? "bg-white/5 border-[#E67E22]/25 shadow-[0_0_15px_rgba(230,126,34,0.05)]"
+                            : "bg-[#181818]/60 border-white/5 hover:border-white/5 hover:bg-[#1C1C1C]"
                         }`}
                       >
                         <div className="flex items-center gap-3 sm:gap-4 text-left">
                           <div
-                            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center border transition-all shrink-0 ${
+                            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center border transition-all duration-300 ease-out shrink-0 ${
                               isSelected
-                                ? "bg-[#FF6600] border-[#FF6600] text-white"
+                                ? "bg-[#E67E22] border-[#E67E22] text-white"
                                 : "border-white/20 text-transparent"
                             }`}
                           >
@@ -236,18 +236,18 @@ export default function InteractiveJourney() {
               </div>
 
               {/* Weight & Cost Analyzer Right */}
-              <div className="lg:col-span-5 flex flex-col justify-between bg-black/45 rounded-3xl border border-white/5 p-6 md:p-8 relative overflow-hidden">
+              <div className="lg:col-span-5 flex flex-col justify-between bg-black/45 rounded-2xl border border-white/5 p-6 md:p-6 lg:p-8 relative overflow-hidden">
                 <div className="space-y-6 z-10">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs font-mono uppercase tracking-widest text-[#FF6600] font-bold">Simulator beban & Biaya</h4>
-                    <span className="text-[10px] font-mono bg-white/5 px-2 py-1 rounded border border-white/10 text-white/60">Live</span>
+                    <h4 className="text-xs font-mono uppercase tracking-widest text-[#E67E22] font-semibold">Simulator beban & Biaya</h4>
+                    <span className="text-[10px] font-mono bg-white/5 px-2 py-1 rounded border border-white/5 text-zinc-400">Live</span>
                   </div>
 
                   {/* Weight Gauge */}
                   <div>
                     <div className="flex justify-between items-end mb-2">
                       <span className="text-sm font-medium text-white/70">Total Estimasi Beban</span>
-                      <span className="text-lg font-mono font-bold text-white">
+                      <span className="text-lg font-mono font-semibold text-white">
                         {totalWeight.toFixed(1)} <span className="text-xs text-white/50">Kg</span>
                       </span>
                     </div>
@@ -275,12 +275,12 @@ export default function InteractiveJourney() {
                       <span className="text-xs text-white font-mono">{Object.keys(cart).length} Unit</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-[#BDBDBD]">Rent Multiplier (3 Hari)</span>
+                      <span className="text-xs text-zinc-400">Rent Multiplier (3 Hari)</span>
                       <span className="text-xs text-white font-mono">1.0x (Normal)</span>
                     </div>
                     <div className="flex justify-between items-end pt-2 border-t border-dashed border-white/5">
                       <span className="text-sm font-medium text-white">Estimasi Biaya / Hari</span>
-                      <span className="text-xl font-bold text-[#FF6600] font-mono">
+                      <span className="text-xl font-semibold text-[#E67E22] font-mono">
                         Rp {totalPrice.toLocaleString("id-ID")}
                       </span>
                     </div>
@@ -290,7 +290,7 @@ export default function InteractiveJourney() {
                 <div className="mt-8 pt-4 border-t border-white/5 z-10">
                   <button
                     onClick={() => setActiveStep(1)}
-                    className="w-full bg-white text-black hover:bg-[#FF6600] hover:text-white font-semibold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95 duration-300 text-sm"
+                    className="w-full bg-white text-black hover:bg-[#E67E22] hover:text-white font-semibold py-4 rounded-2xl transition-all duration-300 ease-out flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95 duration-300 text-sm"
                   >
                     Lanjutkan Ke Verifikasi <ArrowRightIcon className="w-4 h-4" />
                   </button>
@@ -306,14 +306,14 @@ export default function InteractiveJourney() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+              className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:p-8 items-center"
               id="playground-verifikasi"
             >
               {/* Verification Scan Screen Left */}
               <div className="md:col-span-6 flex flex-col items-center">
-                <div className="relative w-full max-w-[340px] aspect-square rounded-[36px] bg-black/60 border border-white/10 flex flex-col items-center justify-center overflow-hidden shadow-2xl">
+                <div className="relative w-full max-w-[340px] aspect-square rounded-[36px] bg-black/60 border border-white/5 flex flex-col items-center justify-center overflow-hidden shadow-xl shadow-black/30">
                   {/* Glowing camera lens mock */}
-                  <div className="absolute top-6 w-3 h-3 rounded-full bg-red-600 animate-pulse border border-white/10" />
+                  <div className="absolute top-6 w-3 h-3 rounded-full bg-red-600 animate-pulse border border-white/5" />
 
                   {/* Scanning Matrix Line */}
                   {verificationState === "scanning" && (
@@ -321,7 +321,7 @@ export default function InteractiveJourney() {
                       initial={{ y: "-100%" }}
                       animate={{ y: "100%" }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#FF6600] to-transparent shadow-[0_0_20px_#FF6600] z-20"
+                      className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#E67E22] to-transparent shadow-[0_0_20px_#E67E22] z-20"
                     />
                   )}
 
@@ -329,8 +329,8 @@ export default function InteractiveJourney() {
                   <div className="z-10 text-center px-6">
                     {verificationState === "idle" && (
                       <div className="space-y-4">
-                        <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-white/50">
-                          <ShieldCheck size={40} className="stroke-1 text-[#FF6600]" />
+                        <div className="w-20 h-20 rounded-full bg-white/5 border border-white/5 flex items-center justify-center mx-auto text-white/50">
+                          <ShieldCheck size={40} className="stroke-1 text-[#E67E22]" />
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-white">Verifikasi Keaslian KTP & Foto</div>
@@ -341,9 +341,9 @@ export default function InteractiveJourney() {
 
                     {verificationState === "scanning" && (
                       <div className="space-y-4">
-                        <div className="w-24 h-24 rounded-full border-4 border-dashed border-[#FF6600] border-t-transparent animate-spin flex items-center justify-center mx-auto" />
+                        <div className="w-24 h-24 rounded-full border-4 border-dashed border-[#E67E22] border-t-transparent animate-spin flex items-center justify-center mx-auto" />
                         <div>
-                          <div className="text-sm font-semibold text-[#FF6600] animate-pulse">Pencocokan Identitas...</div>
+                          <div className="text-sm font-semibold text-[#E67E22] animate-pulse">Pencocokan Identitas...</div>
                           <div className="text-xs text-white/40 font-mono mt-1">{scannedPct}% COMPLETE</div>
                         </div>
                       </div>
@@ -374,22 +374,22 @@ export default function InteractiveJourney() {
               {/* Information Detail Panel Right */}
               <div className="md:col-span-6 flex flex-col justify-center space-y-6">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-widest text-[#FF6600] font-bold">Teknologi Verifikasi Aman</span>
-                  <h3 className="text-2xl font-bold text-white mt-1">Mengapa Kami Memverifikasi?</h3>
+                  <span className="text-xs font-mono uppercase tracking-widest text-[#E67E22] font-semibold">Teknologi Verifikasi Aman</span>
+                  <h3 className="text-2xl font-semibold text-white mt-1">Mengapa Kami Memverifikasi?</h3>
                 </div>
 
-                <p className="text-sm text-[#BDBDBD] font-light leading-[1.6]">
+                <p className="text-sm text-zinc-400 font-light leading-[1.6]">
                   Untuk memastikan keselamatan penyewa dan menjaga standar armada peralatan, OUTRENT mengintegrasikan sistem pembaca KTP dan pencocokan muka berstandar kepolisian. Ini melindungi Anda dari penipuan dan menjamin orisinalitas gear.
                 </p>
 
                 <div className="space-y-3.5 pt-2">
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-md bg-[#FF6600]/10 flex items-center justify-center text-[#FF6600] mt-0.5"><Check size={12} strokeWidth={3} /></div>
-                    <span className="text-sm text-white/80">Enskripsi SHA-256 menyimpan data Anda dengan aman tanpa kebocoran.</span>
+                    <div className="w-5 h-5 rounded-md bg-[#E67E22]/10 flex items-center justify-center text-[#E67E22] mt-0.5"><Check size={12} strokeWidth={3} /></div>
+                    <span className="text-sm text-zinc-200">Enskripsi SHA-256 menyimpan data Anda dengan aman tanpa kebocoran.</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-md bg-[#FF6600]/10 flex items-center justify-center text-[#FF6600] mt-0.5"><Check size={12} strokeWidth={3} /></div>
-                    <span className="text-sm text-white/80">Proses pencocokan instan tanpa perlu datang terlebih dahulu.</span>
+                    <div className="w-5 h-5 rounded-md bg-[#E67E22]/10 flex items-center justify-center text-[#E67E22] mt-0.5"><Check size={12} strokeWidth={3} /></div>
+                    <span className="text-sm text-zinc-200">Proses pencocokan instan tanpa perlu datang terlebih dahulu.</span>
                   </div>
                 </div>
 
@@ -397,7 +397,7 @@ export default function InteractiveJourney() {
                   {verificationState === "idle" && (
                     <button
                       onClick={startVerification}
-                      className="bg-white hover:bg-neutral-200 text-black font-semibold py-3.5 px-6 rounded-2xl transition-all cursor-pointer flex-1 text-center text-sm shadow-md"
+                      className="bg-white hover:bg-neutral-200 text-black font-semibold py-3.5 px-6 rounded-2xl transition-all duration-300 ease-out cursor-pointer flex-1 text-center text-sm shadow-md"
                     >
                       Simulasikan Verifikasi
                     </button>
@@ -414,13 +414,13 @@ export default function InteractiveJourney() {
                     <>
                       <button
                         onClick={resetVerification}
-                        className="border border-white/10 hover:bg-white/5 text-white font-semibold py-3.5 px-5 rounded-2xl transition-all cursor-pointer text-sm"
+                        className="border border-white/5 hover:bg-white/5 text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 ease-out cursor-pointer text-sm"
                       >
                         Ulangi Demo
                       </button>
                       <button
                         onClick={() => setActiveStep(2)}
-                        className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold py-3.5 px-6 rounded-2xl transition-all cursor-pointer flex-1 text-center text-sm shadow-lg shadow-[#FF6600]/15"
+                        className="bg-[#E67E22] hover:bg-[#D35400] text-white font-semibold py-3.5 px-6 rounded-2xl transition-all duration-300 ease-out cursor-pointer flex-1 text-center text-sm shadow-lg shadow-[#E67E22]/15"
                       >
                         Lanjut Ke Pengambilan
                       </button>
@@ -438,7 +438,7 @@ export default function InteractiveJourney() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:p-8"
               id="playground-pengambilan"
             >
               {/* Location List Left */}
@@ -459,26 +459,26 @@ export default function InteractiveJourney() {
                       <div
                         key={bc.id}
                         onClick={() => setSelectedBaseCamp(bc.id)}
-                        className={`p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${
+                        className={`p-4 sm:p-5 rounded-2xl border transition-all duration-300 ease-out cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${
                           isSelected
-                            ? "bg-[#FF6600]/10 border-[#FF6600]/30 shadow-md"
-                            : "bg-[#181818]/60 border-white/5 hover:border-white/10"
+                            ? "bg-[#E67E22]/10 border-[#E67E22]/30 shadow-md"
+                            : "bg-[#181818]/60 border-white/5 hover:border-white/5"
                         }`}
                       >
                         <div className="flex gap-3 sm:gap-4 items-center text-left">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isSelected ? "bg-[#FF6600] text-white" : "bg-[#252525] text-white/55"}`}>
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isSelected ? "bg-[#E67E22] text-white" : "bg-[#252525] text-white/55"}`}>
                             <MapPin size={18} />
                           </div>
                           <div className="min-w-0">
                             <div className="font-semibold text-white text-sm sm:text-base truncate">{bc.name}</div>
-                            <div className="text-xs text-[#BDBDBD] font-light mt-0.5 truncate">{bc.alt}</div>
+                            <div className="text-xs text-zinc-400 font-light mt-0.5 truncate">{bc.alt}</div>
                           </div>
                         </div>
 
                         <div className="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end border-t border-white/5 sm:border-0 pt-2 sm:pt-0">
                           <div className="text-[10px] text-white/40 sm:hidden">Kondisi</div>
                           <div className="text-right">
-                            <div className="text-xs sm:text-sm font-mono font-bold text-[#FF6600]">{bc.temp}</div>
+                            <div className="text-xs sm:text-sm font-mono font-semibold text-[#E67E22]">{bc.temp}</div>
                             <div className="text-[10px] text-white/40 mt-0.5">{bc.weather}</div>
                           </div>
                         </div>
@@ -489,16 +489,16 @@ export default function InteractiveJourney() {
               </div>
 
               {/* Physical Vault Outpost Right */}
-              <div className="lg:col-span-6 bg-black/45 rounded-3xl border border-white/5 p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+              <div className="lg:col-span-6 bg-black/45 rounded-2xl border border-white/5 p-6 sm:p-6 lg:p-8 flex flex-col justify-between relative overflow-hidden">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-mono uppercase tracking-widest text-[#FF6600] font-bold">Rincian Serah Terima</span>
+                    <span className="text-xs font-mono uppercase tracking-widest text-[#E67E22] font-semibold">Rincian Serah Terima</span>
                     <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-mono">Buka 24 Jam</span>
                   </div>
 
                   <div className="space-y-4">
                     <div className="bg-[#181818] border border-white/5 p-4 rounded-xl flex justify-between">
-                      <span className="text-xs text-[#BDBDBD] font-light">Lokasi Outpost</span>
+                      <span className="text-xs text-zinc-400 font-light">Lokasi Outpost</span>
                       <span className="text-xs font-semibold text-white text-right">
                         {selectedBaseCamp === "merbabu" && "Base Camp Alpha - Merbabu Selo"}
                         {selectedBaseCamp === "merapi" && "Base Camp Beta - Merapi New Selo"}
@@ -507,12 +507,12 @@ export default function InteractiveJourney() {
                     </div>
 
                     <div className="bg-[#181818] border border-white/5 p-4 rounded-xl flex justify-between">
-                      <span className="text-xs text-[#BDBDBD] font-light">Sistem Pengambilan</span>
+                      <span className="text-xs text-zinc-400 font-light">Sistem Pengambilan</span>
                       <span className="text-xs font-semibold text-white text-right">Self-Pick Smart Locker QR</span>
                     </div>
 
                     <div className="bg-[#181818] border border-white/5 p-4 rounded-xl flex justify-between">
-                      <span className="text-xs text-[#BDBDBD] font-light">Estimasi Sterilisasi Lab</span>
+                      <span className="text-xs text-zinc-400 font-light">Estimasi Sterilisasi Lab</span>
                       <span className="text-xs font-semibold text-emerald-400 text-right">READY - STERILE SHIELD</span>
                     </div>
                   </div>
@@ -523,12 +523,12 @@ export default function InteractiveJourney() {
                 </div>
 
                 <div className="mt-8 pt-4 border-t border-white/5">
-                  <div className="bg-[#FF6600]/10 border border-white/5 p-4 rounded-xl flex items-center justify-between text-xs text-white">
+                  <div className="bg-[#E67E22]/10 border border-white/5 p-4 rounded-xl flex items-center justify-between text-xs text-white">
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-ping" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#E67E22] animate-ping" />
                       <span>Simulasi alur pemesanan selesai.</span>
                     </div>
-                    <span className="text-[#FF6600] font-bold cursor-pointer" onClick={() => setActiveStep(0)}>Ulangi Alur</span>
+                    <span className="text-[#E67E22] font-semibold cursor-pointer" onClick={() => setActiveStep(0)}>Ulangi Alur</span>
                   </div>
                 </div>
               </div>
